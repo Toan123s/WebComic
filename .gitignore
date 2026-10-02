@@ -1,0 +1,16 @@
+# ===== Bí mật =====
+.env
+.env.*
+!.env.example
+
+# ===== Ảnh upload khi phát triển =====
+uploads/*
+!uploads/.gitkeep
+
+# ===== IDE (nếu mở VS Code/IntelliJ từ thư mục gốc) =====
+.idea/
+.vscode/
+
+# ===== Hệ điều hành =====
+.DS_Store
+Thumbs.db
