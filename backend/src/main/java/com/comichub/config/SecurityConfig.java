@@ -1,43 +1,97 @@
 
 package com.comichub.config;
 
+import com.comichub.security.CustomUserDetailsService;
+import com.comichub.security.JwtAuthenticationFilter;
+import com.comichub.security.JwtService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    public UserDetailsService userDetailsService(
+    public AuthenticationProvider authenticationProvider(
+            CustomUserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
 
-        UserDetails testUser = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("123456"))
-                .roles("ADMIN")
-                .build();
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(userDetailsService);
 
-        return new InMemoryUserDetailsManager(testUser);
+        provider.setPasswordEncoder(passwordEncoder);
+
+        return provider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration)
+            throws Exception {
+
+        return configuration.getAuthenticationManager();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+            HttpSecurity http,
+            AuthenticationProvider authenticationProvider,
+            JwtService jwtService,
+            CustomUserDetailsService userDetailsService)
+            throws Exception {
+
+        JwtAuthenticationFilter jwtAuthenticationFilter =
+                new JwtAuthenticationFilter(
+                        jwtService,
+                        userDetailsService
+                );
 
         http
+                // API sử dụng JWT nên tắt CSRF cho cấu hình stateless này
                 .csrf(csrf -> csrf.disable())
+
+                // Cấu hình xác thực username/password
+                .authenticationProvider(authenticationProvider)
+
+                // Không lưu phiên đăng nhập trên server
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
+                // Cấu hình quyền truy cập
                 .authorizeHttpRequests(auth -> auth
+
+                        // Cho phép đăng nhập mà chưa cần JWT
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/auth/login"
+                        ).permitAll()
+
+                        // Tạm mở API tạo người dùng để phục vụ kiểm thử
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/users"
+                        ).permitAll()
+
+                        // Những API còn lại phải đăng nhập
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+
+                // Chạy JWT filter trước filter xác thực username/password
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
