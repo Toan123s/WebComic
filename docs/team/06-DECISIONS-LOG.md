@@ -58,3 +58,20 @@ Chốt page index, response phân trang và format lỗi phù hợp code hiện 
 - Ảnh hưởng tới file/API/schema/UI:
 - Người xác nhận:
 - Trạng thái: Proposed / Accepted / To verify / Open / Deferred
+
+## D-015 — Phối hợp API contract TV1/TV2/TV3
+- Quyết định: TV1 và TV2 thống nhất endpoint, request/response JSON, validation, status code, error format và quyền trước tích hợp; TV3 review và viết test từ contract. TV2 được dùng mock data trước khi API thật sẵn sàng nhưng phải ghi rõ mock.
+- Thay đổi: không tự ý sửa contract; cần xác nhận của các bên bị ảnh hưởng và cập nhật tài liệu/test.
+- Trạng thái: Accepted về quy trình; từng endpoint vẫn cần xác nhận riêng.
+
+## D-016 — Thay đổi schema và dữ liệu dùng chung TV1/TV3
+- Quyết định: TV3 chủ trì schema/seed; TV1 đối chiếu Entity/Repository. Thay đổi bảng/cột/kiểu/PK/FK/constraint/trạng thái/seed phải được hai bên review trước khi áp dụng.
+- Trạng thái: Accepted về quy trình; chi tiết schema change cần review theo từng đề xuất.
+
+## D-017 — Test trước khi API hoàn thành
+- Quyết định: TV3 được viết test từ contract trước; test chưa chạy với endpoint thật phải ghi BLOCKED/chưa xác minh, không đánh dấu PASS. Khi API sẵn sàng phải chạy lại và lưu bằng chứng.
+- Trạng thái: Accepted.
+
+## D-018 — Không tự ý đổi hợp đồng dùng chung
+- Quyết định: API contract, schema, role/permission và business rule đã chốt chỉ được đổi sau khi nêu tác động và nhận xác nhận của các bên bị ảnh hưởng; cập nhật tài liệu và test liên quan.
+- Trạng thái: Accepted.

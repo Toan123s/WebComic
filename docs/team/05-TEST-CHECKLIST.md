@@ -92,3 +92,12 @@ Chỉ đánh dấu `[x]` sau khi chạy test. Chức năng chưa triển khai gh
 - Mong đợi / thực tế:
 - Log đã loại secret:
 - Trạng thái: Open / In Progress / Fixed / Verified
+
+## 11. Test song song từ API contract
+- [ ] TV3 đã tạo test case từ API contract được thống nhất, bao gồm request, expected status/body, auth/role và trường hợp lỗi.
+- [ ] Nếu API chưa triển khai, test được ghi `BLOCKED — endpoint chưa có`, không đánh dấu pass.
+- [ ] Khi endpoint thật sẵn sàng, TV3 chạy lại cùng test trên backend thật và ghi actual status/body, pass/fail, môi trường/commit.
+- [ ] TV2 đã ghi rõ mock data ở đâu; mock không được dùng làm bằng chứng API thật thành công.
+- [ ] Khi contract/schema/permission thay đổi đã được nhóm chấp thuận, test, frontend types và tài liệu liên quan đã được cập nhật.
+
+**Mẫu bằng chứng:** Endpoint/ID test; contract version hoặc commit; request (đã loại secret); expected; actual; PASS/FAIL/BLOCKED; môi trường; người chạy; lỗi liên quan.

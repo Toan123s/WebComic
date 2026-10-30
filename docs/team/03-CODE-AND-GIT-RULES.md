@@ -47,3 +47,10 @@
 Bàn giao ghi mục đích, file thay đổi, ảnh hưởng API/schema/role, test đã chạy/chưa chạy và việc còn tồn tại. Reviewer kiểm tra correctness, bug, security, contract, tính cần thiết và test.
 
 Khi báo lỗi, cung cấp bước tái hiện, request, kết quả mong đợi/thực tế, log đã loại secret và commit liên quan. Không tắt security hoặc bỏ validation chỉ để request chạy được.
+
+## 7. Quy trình phối hợp song song và thay đổi contract/schema
+1. **TV1 + TV2:** trước khi tích hợp một chức năng, xác nhận endpoint/method, params, request/response JSON, validation, mã HTTP thành công/lỗi, error body và quyền. TV2 được làm trước bằng mock data; ghi rõ mock, không coi mock là kết quả API thật.
+2. **TV1 + TV3:** trước khi sửa schema/seed, đối chiếu bảng/cột/kiểu, PK/FK, constraints, index, giá trị trạng thái và Entity/Repository bị ảnh hưởng. Không tự ý sửa schema dùng chung.
+3. **TV3:** viết test cases từ contract có thể thực hiện trước; khi backend thật sẵn sàng, chạy lại trên endpoint thật và ghi expected/actual, pass/fail, môi trường và commit.
+4. **Thay đổi dùng chung:** không tự ý đổi API contract, schema, role/permission hoặc business rule đã chốt. Mở đề xuất, ghi tác động và nhận xác nhận từ các bên bị ảnh hưởng; sau khi chốt cập nhật contract/schema docs, frontend types, Postman/tests và task board.
+5. Các thành viên được triển khai song song toàn bộ nhiệm vụ. Chia nhỏ theo chức năng/commit và tích hợp thường xuyên; không cần chờ một thành viên hoàn tất toàn bộ module mới bắt đầu.

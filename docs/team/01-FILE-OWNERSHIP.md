@@ -49,3 +49,9 @@ TV3 chủ trì schema, seed roles, PK/FK/UNIQUE/NOT NULL/index, test cases, Post
 4. Review cùng người phụ trách khi thay đổi ảnh hưởng hành vi.
 
 Mỗi task ghi file hiện có sẽ sửa, file mới (nếu cần), chủ trì/reviewer, ảnh hưởng API/schema/role và test. Tài liệu này không chứng minh một file đã tồn tại hoặc đã triển khai.
+
+## 7. Quy tắc phối hợp theo điểm giao nhau
+- **TV1 ↔ TV2 (API/DTO):** TV1 chủ trì contract phía backend; TV2 review và triển khai type/API service theo contract. Trước tích hợp phải chốt endpoint, request/response JSON, status code, error format, auth/role và validation. TV2 có thể dùng mock data để tiếp tục UI, nhưng phải đánh dấu rõ và thay bằng API service thật khi endpoint sẵn sàng.
+- **TV1 ↔ TV3 (schema/entity/test):** TV3 chủ trì schema, seed và ghi nhận PK/FK/constraints; TV1 đối chiếu Entity/Repository. Mọi đổi cột, kiểu, quan hệ, trạng thái hoặc seed dùng chung phải được hai bên review trước khi áp dụng.
+- **TV3 ↔ TV1/TV2 (test/integration):** TV3 viết test từ contract trước; sau đó chạy lại trên API/backend thật và UI tích hợp, ghi pass/fail cùng bằng chứng. TV1/TV2 sửa lỗi theo phạm vi mình phụ trách.
+- **Thay đổi có ảnh hưởng chéo:** không tự ý sửa contract, schema, phân quyền hoặc business rule đã thống nhất. Tạo đề xuất, nêu tác động và nhận xác nhận của các thành viên bị ảnh hưởng; cập nhật tài liệu và test liên quan.

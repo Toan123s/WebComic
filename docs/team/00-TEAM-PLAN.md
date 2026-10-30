@@ -57,3 +57,10 @@ Mỗi task có một người chủ trì. Thay đổi ảnh hưởng phần ngư
 - **D — Tích hợp/nghiệm thu:** regression, build, sửa lỗi và cập nhật tài liệu.
 
 Task chỉ DONE khi đạt tiêu chí, test phù hợp đã chạy, diff được review và tài liệu liên quan được cập nhật.
+
+## 7. Quy tắc phối hợp song song bắt buộc
+- TV1 và TV2 phải thống nhất API contract trước khi nối API thật: method/endpoint, query/path params, request/response JSON, validation, mã HTTP thành công/lỗi, yêu cầu đăng nhập và quyền. TV2 được làm UI bằng mock data khi API chưa sẵn sàng; mock phải tách khỏi API service thật, ghi rõ là mock và không giả lập request thật đã thành công.
+- TV1 và TV3 phải đối chiếu schema SQL Server trước khi thay đổi: bảng/cột, kiểu dữ liệu, PK/FK, UNIQUE/NOT NULL/index, giá trị trạng thái, seed và tác động tới Entity/Repository. Không sửa schema dùng chung âm thầm.
+- TV3 được viết Postman/test cases từ API contract trước khi endpoint hoàn thành. Khi TV1 triển khai endpoint thật, TV3 chạy lại cùng ca kiểm thử với backend thật và ghi kết quả, môi trường/commit, expected/actual.
+- Không thành viên nào tự ý đổi API contract, schema, role/permission hoặc business rule đã thống nhất. Đề xuất thay đổi phải ghi lý do, file/API/schema bị ảnh hưởng, trao đổi người phụ trách và được các bên bị ảnh hưởng đồng ý trước khi sửa. Cập nhật tài liệu sau khi chốt.
+- Có thể code song song toàn bộ nhiệm vụ; các phụ thuộc được xử lý bằng contract/mock/test trước, không yêu cầu chờ thành viên khác hoàn thành toàn bộ module.

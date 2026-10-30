@@ -61,3 +61,9 @@
 - Không cho truy cập tùy ý file ngoài thư mục quản lý.
 - Không commit `.env`, credentials, token thật hoặc file riêng tư.
 - Ghi vấn đề còn mở vào `06-DECISIONS-LOG.md`, chốt phương án rồi cập nhật tài liệu/test.
+
+## 10. Quy tắc thay đổi dùng chung
+- API contract, schema SQL Server, seed role/permission và business rule đã được nhóm chốt là hợp đồng dùng chung. Không tự ý đổi endpoint, field/kiểu dữ liệu, mã trạng thái, quan hệ khóa, giá trị trạng thái nghiệp vụ hoặc quyền truy cập.
+- Khi cần thay đổi, người đề xuất ghi lý do, lựa chọn thay thế, tác động đến backend/frontend/database/test và chờ các thành viên phụ trách phần bị ảnh hưởng xác nhận. Chỉ sau khi thống nhất mới sửa và cập nhật tài liệu/test.
+- Trong lúc chờ API thật, frontend được dùng mock data để làm UI; mock không phải API đã hoàn thành và phải được thay/đối chiếu khi tích hợp.
+- TV3 có thể chuẩn bị test từ contract đã chốt trước khi endpoint được triển khai; test chỉ được đánh dấu pass sau khi thực thi với đúng đối tượng kiểm thử và ghi bằng chứng.

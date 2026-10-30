@@ -49,3 +49,6 @@ Ghi mục tiêu, phạm vi, chủ trì/reviewer, file bị ảnh hưởng, phụ
 | Ngày | Task | Người thực hiện | Kết quả/bằng chứng |
 |---|---|---|---|
 | YYYY-MM-DD | TASK-ID | Thành viên | Commit, test hoặc việc còn lại |
+
+## 7. Quy tắc bắt đầu song song
+Các thành viên có thể làm toàn bộ nhiệm vụ được phân công cùng lúc; không cần chờ module của người khác hoàn tất. Dùng API contract/schema đã thống nhất làm điểm giao nhau: TV2 có thể dùng mock data; TV3 chuẩn bị test từ contract; TV1 triển khai endpoint và đối chiếu schema với TV3. Khi tích hợp, thay mock bằng API thật và chạy lại test. Không tự ý thay contract/schema/permission đã chốt; mọi thay đổi cần xác nhận của các bên bị ảnh hưởng.

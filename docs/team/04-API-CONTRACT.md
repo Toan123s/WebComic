@@ -104,3 +104,13 @@ Response lỗi đề xuất (có thể dùng `ProblemDetail` nếu dự án đã
 ```
 
 Trước tích hợp, mỗi endpoint cần ghi request/response fields, validation, success/error status, quyền, chủ trì và test.
+
+## 10. Quy trình phối hợp API trước và trong tích hợp
+**Chủ trì:** TV1 định nghĩa/triển khai API; TV2 xác nhận nhu cầu UI và tiêu thụ API; TV3 review contract và chuẩn bị test.
+
+Trước khi coi một endpoint là sẵn sàng tích hợp, ghi tối thiểu: method/path; query/path params; request JSON và validation; response JSON; mã HTTP thành công và lỗi; error body; authentication/role/ownership; chủ trì; trạng thái (PROPOSED/AGREED/IMPLEMENTED/VERIFIED). Endpoint ghi `PROPOSED` chưa phải hợp đồng đã chốt.
+
+- TV1 và TV2 phải thống nhất các trường trên trước khi nối API thật. Không tự ý đổi field, endpoint hoặc status mà không báo bên còn lại.
+- TV2 có thể phát triển UI bằng mock data trước. Mock phải nằm tách biệt, được ghi chú rõ; không dùng mock để kết luận API đã hoạt động. Khi endpoint thật có sẵn, thay bằng API service thật và kiểm tra kiểu dữ liệu/response.
+- TV3 có thể tạo Postman request/test cases từ contract đã thống nhất trước khi endpoint hoàn thành. Khi endpoint có thật, chạy lại với backend thật, lưu expected/actual, mã HTTP, kết quả và lỗi tái hiện.
+- Mọi thay đổi contract phải có lý do, người xác nhận và cập nhật tài liệu/test; các bên bị ảnh hưởng (ít nhất TV1 và TV2, TV3 khi test bị ảnh hưởng) cần đồng ý trước khi áp dụng.

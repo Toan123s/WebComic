@@ -1,0 +1,249 @@
+﻿File,Phu trach,Trang thai doc duoc,Viec tiep theo,So dong
+.gitignore,Cả nhóm,TÀI LIỆU/CẤU HÌNH — CẦN XÁC MINH,Kiểm tra phạm vi và tác động trước khi sửa.,16
+backend/.gitattributes,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,4
+backend/.gitignore,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,33
+backend/.mvn/wrapper/maven-wrapper.properties,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,3
+backend/.postman/resources.yaml,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,9
+backend/HELP.md,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,33
+backend/mvnw,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,295
+backend/mvnw.cmd,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,189
+backend/pom.xml,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,159
+backend/postman/globals/workspace.globals.yaml,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,2
+backend/src/main/java/com/comichub/BackendApplication.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,15
+backend/src/main/java/com/comichub/config/CorsConfig.java,TV1,CHƯA TRIỂN KHAI,Cần xác minh chạy thực tế và kiểm thử cấu hình/authentication/authorization.,0
+backend/src/main/java/com/comichub/config/MapperConfig.java,TV1,CHƯA TRIỂN KHAI,Cần xác minh chạy thực tế và kiểm thử cấu hình/authentication/authorization.,0
+backend/src/main/java/com/comichub/config/PasswordConfig.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Cần xác minh chạy thực tế và kiểm thử cấu hình/authentication/authorization.,16
+backend/src/main/java/com/comichub/config/SecurityConfig.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Cần xác minh chạy thực tế và kiểm thử cấu hình/authentication/authorization.,98
+backend/src/main/java/com/comichub/config/UploadConfig.java,TV1,CHƯA TRIỂN KHAI,Cần xác minh chạy thực tế và kiểm thử cấu hình/authentication/authorization.,0
+backend/src/main/java/com/comichub/controller/AdminDashboardController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/AuthController.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,"Có endpoint/phương thức; cần kiểm tra quyền, contract, lỗi và test.",31
+backend/src/main/java/com/comichub/controller/BookmarkController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/CategoryController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/ChapterController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/ChapterPageController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/ComicController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/CommentController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/FileUploadController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/FollowController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/ModerationController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/RatingController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/ReadingHistoryController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/ReportController.java,TV1,CHƯA TRIỂN KHAI,"Hiện chỉ là khung/comment; cần endpoint, validation, gọi service và test theo contract.",10
+backend/src/main/java/com/comichub/controller/UserController.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,"Có endpoint/phương thức; cần kiểm tra quyền, contract, lỗi và test.",78
+backend/src/main/java/com/comichub/dto/admin/DashboardSummaryResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/auth/LoginRequest.java,TV1 (phối hợp TV2),ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,14
+backend/src/main/java/com/comichub/dto/auth/LoginResponse.java,TV1 (phối hợp TV2),ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,11
+backend/src/main/java/com/comichub/dto/auth/LogoutRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/auth/RefreshTokenRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/bookmark/BookmarkResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/category/CategoryCreateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/category/CategoryResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/category/CategoryUpdateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/chapter/ChapterCreateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/chapter/ChapterPageResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/chapter/ChapterResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/chapter/ChapterUpdateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/comic/ComicCreateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/comic/ComicResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/comic/ComicSummaryResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/comic/ComicUpdateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/comment/CommentCreateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/comment/CommentResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/comment/CommentUpdateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/follow/FollowResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/history/ReadingHistoryResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/rating/RatingRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/rating/RatingResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/report/ReportCreateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/report/ReportResponse.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/report/ReportUpdateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/user/UserAdminUpdateRequest.java,TV1 (phối hợp TV2),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/dto/user/UserCreateRequest.java,TV1 (phối hợp TV2),ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,34
+backend/src/main/java/com/comichub/dto/user/UserResponse.java,TV1 (phối hợp TV2),ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,125
+backend/src/main/java/com/comichub/dto/user/UserUpdateRequest.java,TV1 (phối hợp TV2),ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,29
+backend/src/main/java/com/comichub/entity/Bookmark.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/Category.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/Chapter.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/ChapterPage.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/Comic.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/ComicCategory.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/Comment.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/Follow.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/ModerationLog.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/Rating.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/ReadingHistory.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/RefreshToken.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/Report.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/Role.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/entity/User.java,TV1 (phối hợp TV3),ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,64
+backend/src/main/java/com/comichub/entity/UserRole.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/exception/DuplicateResourceException.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,20
+backend/src/main/java/com/comichub/exception/GlobalExceptionHandler.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,71
+backend/src/main/java/com/comichub/exception/ResourceNotFoundException.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,20
+backend/src/main/java/com/comichub/mapper/CategoryMapper.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/mapper/ChapterMapper.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/mapper/ComicMapper.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/mapper/CommentMapper.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/mapper/ReportMapper.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/mapper/UserMapper.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,22
+backend/src/main/java/com/comichub/repository/BookmarkRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,0
+backend/src/main/java/com/comichub/repository/CategoryRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/ChapterPageRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/ChapterRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/ComicCategoryRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/ComicRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/CommentRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/FollowRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/ModerationLogRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/RatingRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/ReadingHistoryRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/RefreshTokenRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/ReportRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/RoleRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/repository/UserRepository.java,TV1 (phối hợp TV3),ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,24
+backend/src/main/java/com/comichub/repository/UserRoleRepository.java,TV1 (phối hợp TV3),CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/security/CustomUserDetailsService.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Cần xác minh chạy thực tế và kiểm thử cấu hình/authentication/authorization.,39
+backend/src/main/java/com/comichub/security/JwtAuthenticationFilter.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Cần xác minh chạy thực tế và kiểm thử cấu hình/authentication/authorization.,115
+backend/src/main/java/com/comichub/security/JwtService.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Cần xác minh chạy thực tế và kiểm thử cấu hình/authentication/authorization.,76
+backend/src/main/java/com/comichub/service/AdminDashboardService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/AuthService.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,80
+backend/src/main/java/com/comichub/service/BookmarkService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/CategoryService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/ChapterPageService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/ChapterService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/ComicService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/CommentService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/FileStorageService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/FollowService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/ModerationService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/RatingService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/ReadingHistoryService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/RefreshTokenService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/ReportService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/RoleService.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/service/UserService.java,TV1,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,Có mã nguồn,170
+backend/src/main/java/com/comichub/utils/CurrentUser.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/java/com/comichub/utils/PageUtils.java,TV1,CHƯA TRIỂN KHAI,Chỉ có khung/comment; cần triển khai.,10
+backend/src/main/resources/application.properties,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,39
+backend/src/test/java/com/comichub/backend/BackendApplicationTests.java,TV1 (phối hợp TV3),CẤU HÌNH/TEST — CẦN XÁC MINH,Kiểm tra cấu hình và test thực tế; không đưa secret vào repo.,13
+database/migration/.gitkeep,TV3 (phối hợp TV1),CÓ SCRIPT — CẦN ĐỐI CHIẾU,"Đối chiếu entity/repository, khóa/ràng buộc và dữ liệu seed; chưa có bằng chứng đã chạy.",0
+database/procedures/.gitkeep,TV3 (phối hợp TV1),CÓ SCRIPT — CẦN ĐỐI CHIẾU,"Đối chiếu entity/repository, khóa/ràng buộc và dữ liệu seed; chưa có bằng chứng đã chạy.",0
+database/schema/Create_Tables.sql,TV3 (phối hợp TV1),CÓ SCRIPT — CẦN ĐỐI CHIẾU,"Đối chiếu entity/repository, khóa/ràng buộc và dữ liệu seed; chưa có bằng chứng đã chạy.",350
+database/seed/Roles.sql,TV3 (phối hợp TV1),CÓ SCRIPT — CẦN ĐỐI CHIẾU,"Đối chiếu entity/repository, khóa/ràng buộc và dữ liệu seed; chưa có bằng chứng đã chạy.",18
+docs/team/00-TEAM-PLAN.md,Cả nhóm,TÀI LIỆU — CẦN NHÓM XÁC NHẬN,Tài liệu không chứng minh tiến độ code; cần chốt các quyết định mở.,59
+docs/team/01-FILE-OWNERSHIP.md,Cả nhóm,TÀI LIỆU — CẦN NHÓM XÁC NHẬN,Tài liệu không chứng minh tiến độ code; cần chốt các quyết định mở.,51
+docs/team/02-BUSINESS-RULES.md,Cả nhóm,TÀI LIỆU — CẦN NHÓM XÁC NHẬN,Tài liệu không chứng minh tiến độ code; cần chốt các quyết định mở.,63
+docs/team/03-CODE-AND-GIT-RULES.md,Cả nhóm,TÀI LIỆU — CẦN NHÓM XÁC NHẬN,Tài liệu không chứng minh tiến độ code; cần chốt các quyết định mở.,49
+docs/team/04-API-CONTRACT.md,Cả nhóm,TÀI LIỆU — CẦN NHÓM XÁC NHẬN,Tài liệu không chứng minh tiến độ code; cần chốt các quyết định mở.,106
+docs/team/05-TEST-CHECKLIST.md,Cả nhóm,TÀI LIỆU — CẦN NHÓM XÁC NHẬN,Tài liệu không chứng minh tiến độ code; cần chốt các quyết định mở.,94
+docs/team/06-DECISIONS-LOG.md,Cả nhóm,TÀI LIỆU — CẦN NHÓM XÁC NHẬN,Tài liệu không chứng minh tiến độ code; cần chốt các quyết định mở.,60
+docs/team/07-TASK-BOARD.md,Cả nhóm,TÀI LIỆU — CẦN NHÓM XÁC NHẬN,Tài liệu không chứng minh tiến độ code; cần chốt các quyết định mở.,51
+docs/team/08-FILE-HEADER-TEMPLATES.md,Cả nhóm,TÀI LIỆU — CẦN NHÓM XÁC NHẬN,Tài liệu không chứng minh tiến độ code; cần chốt các quyết định mở.,119
+frontend/.gitignore,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,24
+frontend/eslint.config.js,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,22
+frontend/index.html,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,13
+frontend/package-lock.json,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,3126
+frontend/package.json,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,32
+frontend/public/favicon.svg,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,1
+frontend/public/icons.svg,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,24
+frontend/README.md,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,75
+frontend/src/App.css,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,190
+frontend/src/App.tsx,TV2,CÓ MÃ NGUỒN MẪU — CHƯA HOÀN THÀNH,App còn nội dung demo Vite; cần chuyển sang route/layout ComicHub.,128
+frontend/src/assets/hero.png,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,322
+frontend/src/assets/react.svg,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,1
+frontend/src/assets/vite.svg,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,1
+frontend/src/components/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/components/common/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/components/common/ConfirmDialog.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/components/common/EmptyState.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/components/common/ErrorMessage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/components/common/Loading.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/components/common/Pagination.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/components/common/SearchBar.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/components/ui/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/components/ui/Avatar.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/components/ui/Button.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/components/ui/Input.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/components/ui/Modal.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/context/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/context/AuthContext.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/hooks/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/hooks/useAuth.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/hooks/useComics.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/hooks/useDebounce.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/hooks/usePagination.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/index.css,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,117
+frontend/src/layouts/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/layouts/AdminLayout.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/layouts/CreatorLayout.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/layouts/ReaderLayout.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/main.tsx,TV2,ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH,"Cần xác minh tích hợp API, loading/error/empty và luồng giao diện.",16
+frontend/src/pages/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/pages/admin/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/pages/admin/AdminDashboardPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/admin/AdminProfilePage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/admin/CategoryManagementPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/admin/ComicManagementPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/admin/CommentModerationPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/admin/ModerationLogsPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/admin/ReportManagementPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/admin/RoleManagementPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/admin/UserManagementPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/auth/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/pages/auth/ForgotPasswordPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/auth/LoginPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/auth/RegisterPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/creator/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/pages/creator/ChapterEditorPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/creator/ChapterPagesPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/creator/ComicEditorPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/creator/CreatorAIChatPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/creator/CreatorDashboardPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/creator/CreatorProfilePage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/creator/MyComicsPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/reader/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/pages/reader/BookmarksPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/reader/ComicDetailPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/reader/FollowingPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/reader/HomePage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/reader/ReadChapterPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/reader/ReaderProfilePage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/reader/ReadingHistoryPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/pages/reader/SearchPage.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/routes/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/routes/AppRoutes.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/routes/ProtectedRoute.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/routes/RoleRoute.tsx,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/services/api/adminApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/apiClient.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/authApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/bookmarkApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/categoryApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/chapterApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/comicApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/commentApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/followApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/ratingApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/readingHistoryApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/reportApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/uploadApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/services/api/userApi.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/src/types/admin.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/api.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/auth.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/category.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/chapter.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/comic.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/comment.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/rating.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/report.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/types/user.ts,TV2,CHƯA TRIỂN KHAI,File hiện chỉ có comment/khung; cần UI hoặc logic thật theo luồng.,7
+frontend/src/utils/.gitkeep,TV2,CÓ TÀI NGUYÊN,Kiểm tra dùng đúng trong giao diện.,0
+frontend/tsconfig.app.json,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,26
+frontend/tsconfig.json,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,7
+frontend/tsconfig.node.json,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,23
+frontend/vite.config.ts,TV2,CẤU HÌNH FRONTEND — CẦN XÁC MINH,Cần build/typecheck và xác minh dependencies.,7
+README-CAP-NHAT.md,Cả nhóm,TÀI LIỆU/CẤU HÌNH — CẦN XÁC MINH,Kiểm tra phạm vi và tác động trước khi sửa.,21
+README.md,Cả nhóm,TÀI LIỆU/CẤU HÌNH — CẦN XÁC MINH,Kiểm tra phạm vi và tác động trước khi sửa.,1129
