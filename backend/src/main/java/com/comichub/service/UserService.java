@@ -1,6 +1,17 @@
 
 package com.comichub.service;
 
+
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: UserService.java
+ * PHỤ TRÁCH: TV1 - Backend và Security
+ * MỤC ĐÍCH: Xử lý nghiệp vụ cho chức năng User.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — chưa kết luận hoàn thành; cần kiểm thử theo task.
+ * CÒN THIẾU: Cần xác nhận tiêu chí hoàn thành, kiểm thử phù hợp và cập nhật trạng thái sau khi hoàn tất.
+ * LƯU Ý: Triển khai validation nghiệp vụ, ownership/trạng thái, lỗi và transaction khi cần; phối hợp schema/API contract.
+ */
+
 import com.comichub.dto.user.UserCreateRequest;
 import com.comichub.dto.user.UserUpdateRequest;
 import com.comichub.dto.user.UserResponse;

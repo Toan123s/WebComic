@@ -1,3 +1,13 @@
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: CustomUserDetailsService.java
+ * PHỤ TRÁCH: TV1 - Backend và Security
+ * MỤC ĐÍCH: Nạp tài khoản cho Spring Security.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
+ * CÒN THIẾU: Kiểm thử tìm theo username/email và trường hợp không tìm thấy; rà lại lỗi login.
+ * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
+ */
+
 
 package com.comichub.security;
 

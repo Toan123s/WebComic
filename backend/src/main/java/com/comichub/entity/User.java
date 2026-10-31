@@ -1,3 +1,13 @@
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: User.java
+ * PHỤ TRÁCH: TV1 - Backend; phối hợp TV3
+ * MỤC ĐÍCH: Entity ánh xạ bảng users.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
+ * CÒN THIẾU: Đối chiếu column/constraint/auditing với SQL Server schema.
+ * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
+ */
+
 
 package com.comichub.entity;
 

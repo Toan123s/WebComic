@@ -1,3 +1,13 @@
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: UserUpdateRequest.java
+ * PHỤ TRÁCH: TV1 - Backend; phối hợp TV2
+ * MỤC ĐÍCH: DTO cập nhật User.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
+ * CÒN THIẾU: Kiểm thử validation và giới hạn trường mà người gọi được phép cập nhật.
+ * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
+ */
+
 
 package com.comichub.dto.user;
 

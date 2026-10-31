@@ -1,3 +1,13 @@
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: JwtService.java
+ * PHỤ TRÁCH: TV1 - Backend và Security
+ * MỤC ĐÍCH: Tạo và kiểm tra JWT.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
+ * CÒN THIẾU: Kiểm thử chữ ký/expiry và đảm bảo secret chỉ lấy từ cấu hình an toàn.
+ * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
+ */
+
 
 package com.comichub.security;
 

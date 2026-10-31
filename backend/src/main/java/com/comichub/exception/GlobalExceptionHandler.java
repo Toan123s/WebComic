@@ -1,6 +1,17 @@
 
 package com.comichub.exception;
 
+
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: GlobalExceptionHandler.java
+ * PHỤ TRÁCH: TV1 - Backend và Security
+ * MỤC ĐÍCH: Xử lý ngoại lệ backend: GlobalExceptionHandler.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — chưa kết luận hoàn thành; cần kiểm thử theo task.
+ * CÒN THIẾU: Cần xác nhận tiêu chí hoàn thành, kiểm thử phù hợp và cập nhật trạng thái sau khi hoàn tất.
+ * LƯU Ý: Response lỗi không được lộ stack trace, secret, token hoặc password hash.
+ */
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;

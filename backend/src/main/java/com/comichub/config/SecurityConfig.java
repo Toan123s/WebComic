@@ -1,3 +1,13 @@
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: SecurityConfig.java
+ * PHỤ TRÁCH: TV1 - Backend và Security
+ * MỤC ĐÍCH: Cấu hình Spring Security và quy tắc truy cập.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
+ * CÒN THIẾU: Kiểm thử public/protected endpoint, JWT, CORS, 401/403 và quyền theo role.
+ * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
+ */
+
 
 package com.comichub.config;
 

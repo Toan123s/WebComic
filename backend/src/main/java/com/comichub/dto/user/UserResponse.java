@@ -1,3 +1,13 @@
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: UserResponse.java
+ * PHỤ TRÁCH: TV1 - Backend; phối hợp TV2
+ * MỤC ĐÍCH: DTO response User.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
+ * CÒN THIẾU: Xác nhận không lộ password hash/token và khớp frontend type.
+ * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
+ */
+
 
 package com.comichub.dto.user;
 

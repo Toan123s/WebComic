@@ -1,3 +1,13 @@
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: UserCreateRequest.java
+ * PHỤ TRÁCH: TV1 - Backend; phối hợp TV2
+ * MỤC ĐÍCH: DTO tạo User.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
+ * CÒN THIẾU: Đối chiếu validation và bảo đảm không nhận trường nhạy cảm/quyền không được phép.
+ * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
+ */
+
 
 package com.comichub.dto.user;
 

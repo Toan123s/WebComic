@@ -1,3 +1,13 @@
+/**
+ * DỰ ÁN: ComicHub
+ * FILE: UserRepository.java
+ * PHỤ TRÁCH: TV1 - Backend; phối hợp TV3
+ * MỤC ĐÍCH: Truy vấn persistence cho User.
+ * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
+ * CÒN THIẾU: Đối chiếu tên cột và chạy truy vấn với database thật.
+ * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
+ */
+
 
 package com.comichub.repository;
 
