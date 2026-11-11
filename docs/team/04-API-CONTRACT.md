@@ -4,6 +4,7 @@
 Các endpoint dưới đây là tham khảo/đề xuất, **không khẳng định đã triển khai hoặc đã chốt**. Kiểm tra controller hiện có trước khi thêm. Gắn trạng thái:
 - `EXISTS`: có trong code, vẫn cần test.
 - `AGREED`: contract đã chốt nhưng chưa triển khai.
+- `IMPLEMENTED`: đã có code; cần xác minh tích hợp và test với môi trường thật.
 - `PROPOSED`: cần review.
 - `DEFERRED`: để giai đoạn sau.
 
@@ -17,10 +18,16 @@ Các endpoint dưới đây là tham khảo/đề xuất, **không khẳng đị
 ## 3. Auth
 | Method | Endpoint | Mục đích/trạng thái |
 |---|---|---|
-| POST | `/api/auth/login` | Login — kiểm tra code hiện có |
+| POST | `/api/auth/login` | IMPLEMENTED — public; đăng nhập và cấp access + refresh token |
 | POST | `/api/auth/register` | Register — PROPOSED |
-| POST | `/api/auth/refresh` | Refresh — cần chốt token policy |
-| POST | `/api/auth/logout` | Logout/revoke — cần chốt token policy |
+| POST | `/api/auth/refresh` | IMPLEMENTED — public; nhận refresh token hiện tại, rotate và cấp cặp token mới |
+| POST | `/api/auth/logout` | IMPLEMENTED — cần access token; thu hồi refresh token của đúng user/phiên hiện tại |
+
+Login request gồm `usernameOrEmail` và `password`. Refresh/logout request gồm `refreshToken`. Login và refresh trả `accessToken`, `refreshToken`, `tokenType` (`Bearer`), `expiresIn` và `refreshExpiresIn` (milliseconds); login bổ sung `userId`, `username`, `displayName`.
+
+Refresh token là chuỗi opaque ngẫu nhiên; DB chỉ lưu SHA-256 hex digest trong cột `refresh_tokens.token`. Chỉ dùng token một lần: refresh thành công thu hồi token cũ và trả token mới. Nếu token đã rotate bị dùng lại, backend thu hồi mọi refresh token còn hoạt động của tài khoản và trả `401`. Refresh token không tồn tại/hết hạn/tài khoản không ACTIVE cũng trả `401`. Logout trả `204` và chỉ thu hồi token nếu token thuộc user của access token gửi kèm; access token hiện tại vẫn hợp lệ tối đa tới `expiresIn`.
+
+Schema hiện có đã đủ cột/unique constraint cho digest; không cần migration. `JWT_SECRET` phải là chuỗi Base64 giải mã thành tối thiểu 32 bytes ngẫu nhiên; đặt `JWT_EXPIRATION_MS` và `JWT_REFRESH_EXPIRATION_MS` theo milliseconds. Không bật TRACE security logging ở môi trường thường.
 
 ## 4. User
 | Method | Endpoint | Mục đích/trạng thái |
@@ -40,13 +47,19 @@ Các endpoint dưới đây là tham khảo/đề xuất, **không khẳng đị
 | GET | `/api/comics/{id}` | Chi tiết — PROPOSED |
 | POST | `/api/comics` | Tạo truyện — creator được phép |
 | PATCH | `/api/comics/{id}` | Sửa — kiểm tra ownership |
+| GET | `/api/comics/{id}/revisions` | Lịch sử revision; giới hạn theo owner/MODERATOR/ADMIN |
 | DELETE | `/api/comics/{id}` | Xóa/ẩn — cần chốt policy |
 | PATCH | `/api/comics/{id}/publish` | Publish/unpublish — cần chốt trạng thái |
+| GET | `/api/moderation/comic-revisions/pending` | Hàng chờ duyệt revision — MODERATOR |
+| POST | `/api/moderation/comic-revisions/{revisionId}/approve` | Duyệt và áp dụng revision — MODERATOR |
+| POST | `/api/moderation/comic-revisions/{revisionId}/reject` | Từ chối revision, yêu cầu lý do — MODERATOR |
 | GET | `/api/categories` | Danh sách |
 | GET | `/api/categories/{id}` | Chi tiết |
 | POST | `/api/categories` | Tạo — role được phép |
 | PATCH | `/api/categories/{id}` | Sửa — role được phép |
 | DELETE | `/api/categories/{id}` | Xóa — chốt xử lý category đang dùng |
+
+Revision của truyện đã công khai lưu trong bảng `comic_revisions`. Khi cập nhật database đã có, chạy `database/migration/001_Create_Comic_Revisions.sql` một lần; migration có thể chạy lại an toàn và chỉ tạo bảng/index còn thiếu. Không chạy lại `Create_Tables.sql` trên database có dữ liệu vì script đó xóa và tạo lại toàn bộ schema.
 
 ## 6. Chapter và pages
 | Method | Endpoint | Mục đích |

@@ -8,10 +8,13 @@
 ## 2. Tài khoản và xác thực
 - JWT là hướng xác thực chính; phải test triển khai thực tế.
 - Mật khẩu được hash bằng `PasswordEncoder`; không lưu/trả mật khẩu dạng rõ.
-- Không trả password hash, token hoặc secret trong DTO.
+- Không trả password hash hoặc secret trong DTO; access/refresh token chỉ trả từ endpoint xác thực.
 - Login xử lý đúng tài khoản không tồn tại, password sai và trạng thái tài khoản nếu có.
 - Request chưa xác thực và request thiếu quyền phải bị từ chối theo contract.
-- **Cần chốt:** refresh token, nơi lưu, expiry, rotation/revoke, logout và lưu token phía client.
+- Access token ký HMAC, thời hạn cấu hình mặc định 1 giờ; refresh token ngẫu nhiên opaque, mặc định 7 ngày, lưu SHA-256 hash trong DB.
+- Mỗi lần refresh phải rotate refresh token; token cũ dùng lại sẽ thu hồi các refresh session còn hoạt động của tài khoản.
+- Logout thu hồi refresh token của phiên hiện tại; access token đã phát hành vẫn hợp lệ đến khi hết hạn. Client phải xóa cả hai token khi logout.
+- Refresh token được trao đổi qua JSON body. Không ghi token hoặc Authorization header vào log.
 - Đăng ký/khôi phục mật khẩu chỉ coi là có khi API, policy và test đã tồn tại.
 
 ## 3. Role và quyền
@@ -25,6 +28,8 @@
 - Public chỉ xem comic được phép công khai.
 - Creator chỉ quản lý comic của mình.
 - Publish cần kiểm tra quyền và điều kiện nghiệp vụ.
+- Sửa truyện đã công khai lưu thành revision riêng để bản đang hiển thị không đổi trong lúc chờ MODERATOR; mỗi truyện chỉ có một revision `PENDING`.
+- MODERATOR duyệt thì áp dụng revision; từ chối thì giữ nguyên truyện đang công khai và lưu lý do để AUTHOR xem lại.
 - Category xử lý dữ liệu trùng theo schema/policy.
 - **Cần chốt:** trạng thái comic, điều kiện publish, xóa cứng/ẩn và xử lý category đang được sử dụng.
 

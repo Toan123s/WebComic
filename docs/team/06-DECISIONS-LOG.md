@@ -75,3 +75,15 @@ Chốt page index, response phân trang và format lỗi phù hợp code hiện 
 ## D-018 — Không tự ý đổi hợp đồng dùng chung
 - Quyết định: API contract, schema, role/permission và business rule đã chốt chỉ được đổi sau khi nêu tác động và nhận xác nhận của các bên bị ảnh hưởng; cập nhật tài liệu và test liên quan.
 - Trạng thái: Accepted.
+
+## D-022 — Access và refresh token
+- Access token dùng JWT ký HMAC, có issuer và token-use claim; thời hạn mặc định 1 giờ. JWT secret Base64 phải giải mã thành tối thiểu 32 bytes.
+- Refresh token là opaque, sinh ngẫu nhiên, chỉ lưu SHA-256 digest trong bảng `refresh_tokens`; thời hạn mặc định 7 ngày.
+- Refresh xoay token; phát hiện token đã thu hồi bị tái sử dụng sẽ thu hồi tất cả refresh session đang hoạt động của tài khoản. Logout chỉ thu hồi refresh token thuộc phiên/user đã xác thực; access token còn hiệu lực đến expiry.
+- Vận chuyển refresh token qua JSON request/response. Schema hiện tại có đủ cột và unique constraint, không cần migration.
+- Trạng thái: Đã triển khai theo mặc định an toàn để review; cần kiểm thử với SQL Server thật và xác nhận client xử lý token.
+
+## D-023 — Revision cho Comic đã công khai
+- Quyết định: lưu snapshot bản sửa riêng để truyện đã duyệt tiếp tục hiển thị trong lúc MODERATOR duyệt; mỗi truyện tối đa một revision `PENDING`. Duyệt áp dụng snapshot; từ chối giữ nguyên bản public và lưu lý do.
+- Schema: thêm bảng `comic_revisions` với khóa ngoại, check constraints và filtered unique index. Migration riêng idempotent; đã áp dụng vào database local `comichub` mà không dựng lại schema hoặc sửa dữ liệu/role hiện có.
+- Trạng thái: Schema đã áp dụng; backend `ddl-auto=validate` và test suite đã chạy thành công.

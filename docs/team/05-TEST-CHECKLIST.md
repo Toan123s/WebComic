@@ -15,6 +15,11 @@ Chỉ đánh dấu `[x]` sau khi chạy test. Chức năng chưa triển khai gh
 ## 3. Authentication/Security
 - [ ] Login hợp lệ.
 - [ ] Password sai và user không tồn tại bị từ chối.
+- [ ] Login trả access token và refresh token; DB chỉ chứa digest refresh token.
+- [ ] Access token sai chữ ký, sai issuer/type hoặc hết hạn bị từ chối.
+- [ ] Refresh token hợp lệ rotate đúng một lần; token cũ dùng lại thu hồi các phiên refresh còn hoạt động.
+- [ ] Refresh token hết hạn/không tồn tại bị từ chối; tài khoản không ACTIVE không refresh được.
+- [ ] Logout chỉ thu hồi refresh token thuộc user hiện tại; logout không thu hồi refresh session của user khác.
 - [ ] Trạng thái account bị vô hiệu hóa được xử lý nếu có.
 - [ ] Protected endpoint không token bị từ chối (thường 401).
 - [ ] Token sai/hết hạn bị từ chối.
@@ -39,6 +44,8 @@ Chỉ đánh dấu `[x]` sau khi chạy test. Chức năng chưa triển khai gh
 - [ ] Public không xem comic chưa công khai.
 - [ ] Creator chỉ tạo/sửa comic của mình.
 - [ ] Publish đúng điều kiện.
+- [ ] Sửa truyện đã public không làm thay đổi bản đang hiển thị trước khi duyệt revision.
+- [ ] Chỉ một revision PENDING mỗi truyện; duyệt áp dụng snapshot, từ chối lưu lý do và giữ bản public cũ.
 - [ ] Category trùng được xử lý.
 - [ ] Xóa category đang được sử dụng theo policy.
 - [ ] User thiếu quyền không quản lý category.
