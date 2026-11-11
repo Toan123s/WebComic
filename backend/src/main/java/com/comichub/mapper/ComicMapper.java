@@ -1,10 +1,18 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: ComicMapper.java
- * PHỤ TRÁCH: TV1 - Backend
- * MỤC ĐÍCH: Chuyển đổi giữa Entity và DTO cho Comic.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Không truy vấn database, kiểm tra quyền hoặc chứa nghiệp vụ.
- */
+package com.comichub.mapper;
 
+import com.comichub.dto.comic.ComicResponse;
+import com.comichub.dto.comic.ComicSummaryResponse;
+import com.comichub.entity.Comic;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper(componentModel = "spring")
+public interface ComicMapper {
+
+    @Mapping(source = "author.id", target = "authorId")
+    @Mapping(source = "author.displayName", target = "authorName")
+    ComicResponse toResponse(Comic comic);
+
+    @Mapping(source = "author.displayName", target = "authorName")
+    ComicSummaryResponse toSummaryResponse(Comic comic);
+}

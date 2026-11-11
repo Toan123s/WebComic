@@ -8,3 +8,14 @@
  * LƯU Ý: Đối chiếu với API contract, schema và các thành phần liên quan trước khi triển khai.
  */
 
+package com.comichub.dto.auth;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record LogoutRequest(
+        @NotBlank(message = "Refresh token không được để trống")
+        @Size(max = 128, message = "Refresh token không hợp lệ")
+        String refreshToken
+) {
+}

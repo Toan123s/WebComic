@@ -1,10 +1,28 @@
+package com.comichub.dto.comic;
+
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
+
 /**
  * DỰ ÁN: ComicHub
  * FILE: ComicUpdateRequest.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Thành phần backend ComicUpdateRequest.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Đối chiếu với API contract, schema và các thành phần liên quan trước khi triển khai.
+ * PHỤ TRÁCH: TV1 - Backend
+ * MỤC ĐÍCH: DTO nhận dữ liệu cập nhật truyện.
+ * TRẠNG THÁI: ĐANG TRIỂN KHAI — cần kiểm thử validation.
  */
+public record ComicUpdateRequest(
 
+        @Size(max = 200, message = "Tên truyện tối đa 200 ký tự")
+        String title,
+
+        String description,
+
+        @Size(max = 500, message = "Cover URL tối đa 500 ký tự")
+        String coverUrl,
+
+        @Pattern(regexp = "ONGOING|COMPLETED|HIATUS",
+                message = "Trạng thái truyện không hợp lệ")
+        String publicationStatus
+
+) {
+}

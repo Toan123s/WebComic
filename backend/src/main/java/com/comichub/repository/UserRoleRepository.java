@@ -8,3 +8,18 @@
  * LƯU Ý: Chỉ xử lý truy vấn dữ liệu; nghiệp vụ và ownership thuộc Service.
  */
 
+package com.comichub.repository;
+
+import com.comichub.entity.UserRole;
+import com.comichub.entity.UserRoleId;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleId> {
+
+    @Query("select userRole.role.name from UserRole userRole where userRole.user.id = :userId")
+    List<String> findRoleNamesByUserId(@Param("userId") Long userId);
+}

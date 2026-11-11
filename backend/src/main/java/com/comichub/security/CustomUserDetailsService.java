@@ -13,21 +13,25 @@ package com.comichub.security;
 
 import com.comichub.entity.User;
 import com.comichub.repository.UserRepository;
+import com.comichub.repository.UserRoleRepository;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(
+            UserRepository userRepository,
+            UserRoleRepository userRoleRepository) {
         this.userRepository = userRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @Override
@@ -42,7 +46,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPasswordHash())
-                .authorities(List.of())
+                .authorities(userRoleRepository.findRoleNamesByUserId(user.getId())
+                        .stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .toList())
                 .disabled(!"ACTIVE".equalsIgnoreCase(user.getStatus()))
                 .build();
     }

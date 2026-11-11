@@ -23,9 +23,14 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Objects;
 
 @Service
 public class JwtService {
+
+    private static final String ISSUER = "comichub";
+    private static final String TOKEN_USE_CLAIM = "token_use";
+    private static final String ACCESS_TOKEN_USE = "access";
 
     private final SecretKey signingKey;
     private final long expirationMs;
@@ -34,7 +39,17 @@ public class JwtService {
             @Value("${app.jwt.secret}") String secret,
             @Value("${app.jwt.expiration-ms}") long expirationMs) {
 
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalArgumentException("JWT secret không được để trống");
+        }
+        if (expirationMs <= 0) {
+            throw new IllegalArgumentException("Access token expiry phải lớn hơn 0");
+        }
         byte[] keyBytes = Decoders.BASE64.decode(secret);
+        if (keyBytes.length < 32) {
+            throw new IllegalArgumentException(
+                    "JWT secret phải giải mã thành tối thiểu 32 bytes");
+        }
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
         this.expirationMs = expirationMs;
     }
@@ -46,7 +61,9 @@ public class JwtService {
         Date expiration = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
+                .issuer(ISSUER)
                 .subject(username)
+                .claim(TOKEN_USE_CLAIM, ACCESS_TOKEN_USE)
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(signingKey)
@@ -66,7 +83,8 @@ public class JwtService {
         try {
             Claims claims = extractClaims(token);
 
-            return claims.getSubject().equals(userDetails.getUsername())
+            return Objects.equals(claims.getSubject(), userDetails.getUsername())
+                    && ACCESS_TOKEN_USE.equals(claims.get(TOKEN_USE_CLAIM, String.class))
                     && claims.getExpiration().after(new Date());
 
         } catch (JwtException | IllegalArgumentException exception) {
@@ -79,6 +97,8 @@ public class JwtService {
 
         return Jwts.parser()
                 .verifyWith(signingKey)
+                .requireIssuer(ISSUER)
+                .require(TOKEN_USE_CLAIM, ACCESS_TOKEN_USE)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

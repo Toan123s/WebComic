@@ -22,6 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -84,13 +86,21 @@ public class SecurityConfig {
                         // Cho phép đăng nhập mà chưa cần JWT
                         .requestMatchers(
                                 HttpMethod.POST,
-                                "/api/auth/login"
+                                "/api/auth/login",
+                                "/api/auth/refresh"
                         ).permitAll()
 
                         // Tạm mở API tạo người dùng để phục vụ kiểm thử
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/users"
+                        ).permitAll()
+
+                        // Danh sách/chi tiết public tự lọc truyện đã duyệt trong Service.
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/comics",
+                                "/api/comics/**"
                         ).permitAll()
 
                         // Những API còn lại phải đăng nhập

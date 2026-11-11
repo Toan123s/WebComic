@@ -51,13 +51,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         // Bước 2: Không có Bearer token thì để Spring Security xử lý tiếp
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Bước 3: Tách JWT khỏi "Bearer "
-        String jwt = authHeader.substring(7);
+        int separator = authHeader.indexOf(' ');
+        if (separator <= 0
+                || !"Bearer".equalsIgnoreCase(authHeader.substring(0, separator))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String jwt = authHeader.substring(separator + 1).trim();
+        if (jwt.isEmpty()) {
+            response.sendError(
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    "Access token không hợp lệ hoặc đã hết hạn"
+            );
+            return;
+        }
 
         // Bước 4: Đọc username và xác minh token
         String username;
@@ -113,7 +126,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (UsernameNotFoundException exception) {
                 response.sendError(
                         HttpServletResponse.SC_UNAUTHORIZED,
-                        "Tài khoản không tồn tại"
+                        "Access token không hợp lệ hoặc tài khoản không hoạt động"
                 );
                 return;
             }

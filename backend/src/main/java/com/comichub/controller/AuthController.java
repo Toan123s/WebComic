@@ -13,11 +13,15 @@ package com.comichub.controller;
 
 import com.comichub.dto.auth.LoginRequest;
 import com.comichub.dto.auth.LoginResponse;
+import com.comichub.dto.auth.LogoutRequest;
+import com.comichub.dto.auth.RefreshTokenRequest;
 import com.comichub.service.AuthService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,5 +41,19 @@ public class AuthController {
         LoginResponse response = authService.login(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponse> refresh(
+            @Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refresh(request));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @Valid @RequestBody LogoutRequest request,
+            Authentication authentication) {
+        authService.logout(request, authentication.getName());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

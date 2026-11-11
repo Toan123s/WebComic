@@ -8,3 +8,10 @@
  * LƯU Ý: Chỉ xử lý truy vấn dữ liệu; nghiệp vụ và ownership thuộc Service.
  */
 
+package com.comichub.repository;
+
+import com.comichub.entity.ModerationLog;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ModerationLogRepository extends JpaRepository<ModerationLog, Long> {
+}
