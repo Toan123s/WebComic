@@ -1,7 +1,49 @@
-/*
- * ComicHub | Phụ trách: Component dùng chung
- * Trách nhiệm: điều khiển phân trang.
- * Trạng thái: CHƯA TRIỂN KHAI — file hiện đang rỗng, chưa có chức năng thực thi.
- * Việc cần làm: triển khai theo API contract và kiểu dữ liệu đã thống nhất; kiểm tra loading, error, empty và success phù hợp.
- * Lưu ý: giữ đúng phạm vi module; không tự ý đổi cấu trúc hoặc thêm nghiệp vụ chưa thống nhất.
- */
+export function Pagination({
+  page,
+  totalPages,
+  onChange,
+}: {
+  page: number
+  totalPages: number
+  onChange: (page: number) => void
+}) {
+  if (totalPages <= 1) return null
+
+  const first = Math.max(0, Math.min(page - 2, totalPages - 5))
+  const pages = Array.from(
+    { length: Math.min(5, totalPages) },
+    (_, index) => first + index,
+  )
+
+  return (
+    <nav className="pagination" aria-label="Phân trang">
+      <button
+        className="page-button"
+        disabled={page === 0}
+        onClick={() => onChange(page - 1)}
+        type="button"
+      >
+        Trước
+      </button>
+      {pages.map((item) => (
+        <button
+          aria-current={item === page ? 'page' : undefined}
+          className={`page-button ${item === page ? 'is-current' : ''}`}
+          key={item}
+          onClick={() => onChange(item)}
+          type="button"
+        >
+          {item + 1}
+        </button>
+      ))}
+      <button
+        className="page-button"
+        disabled={page >= totalPages - 1}
+        onClick={() => onChange(page + 1)}
+        type="button"
+      >
+        Sau
+      </button>
+    </nav>
+  )
+}

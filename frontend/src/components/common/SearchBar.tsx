@@ -1,7 +1,46 @@
-/*
- * ComicHub | Phụ trách: Component dùng chung
- * Trách nhiệm: ô tìm kiếm.
- * Trạng thái: CHƯA TRIỂN KHAI — file hiện đang rỗng, chưa có chức năng thực thi.
- * Việc cần làm: triển khai theo API contract và kiểu dữ liệu đã thống nhất; kiểm tra loading, error, empty và success phù hợp.
- * Lưu ý: giữ đúng phạm vi module; không tự ý đổi cấu trúc hoặc thêm nghiệp vụ chưa thống nhất.
- */
+import { useId, useState, type FormEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+export function SearchBar({
+  initialValue = '',
+  placeholder = 'Tìm tên truyện, tác giả...',
+  onSearch,
+  className = '',
+}: {
+  initialValue?: string
+  placeholder?: string
+  onSearch?: (value: string) => void
+  className?: string
+}) {
+  const [value, setValue] = useState(initialValue)
+  const inputId = useId()
+  const navigate = useNavigate()
+
+  const submit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const query = value.trim()
+    if (onSearch) {
+      onSearch(query)
+    } else {
+      navigate(`/search${query ? `?keyword=${encodeURIComponent(query)}` : ''}`)
+    }
+  }
+
+  return (
+    <form className={`search-bar ${className}`} onSubmit={submit} role="search">
+      <label className="sr-only" htmlFor={inputId}>Tìm kiếm truyện</label>
+      <input
+        autoComplete="off"
+        id={inputId}
+        maxLength={100}
+        onChange={(event) => setValue(event.target.value)}
+        placeholder={placeholder}
+        type="search"
+        value={value}
+      />
+      <button aria-label="Tìm kiếm" className="search-submit" type="submit">
+        Tìm
+      </button>
+    </form>
+  )
+}

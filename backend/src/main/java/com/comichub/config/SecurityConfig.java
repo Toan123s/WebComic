@@ -30,6 +30,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableMethodSecurity
@@ -61,7 +62,8 @@ public class SecurityConfig {
             HttpSecurity http,
             AuthenticationProvider authenticationProvider,
             JwtService jwtService,
-            CustomUserDetailsService userDetailsService)
+            CustomUserDetailsService userDetailsService,
+            CorsConfigurationSource corsConfigurationSource)
             throws Exception {
 
         JwtAuthenticationFilter jwtAuthenticationFilter =
@@ -77,6 +79,7 @@ public class SecurityConfig {
                         403, "Bạn không có quyền thực hiện thao tác này");
 
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 // API sử dụng JWT nên tắt CSRF cho cấu hình stateless này
                 .csrf(csrf -> csrf.disable())
 

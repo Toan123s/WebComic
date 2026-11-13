@@ -1,7 +1,27 @@
-/*
- * ComicHub | Phụ trách: TV2 — Frontend
- * Trách nhiệm: gọi API chương.
- * Trạng thái: CHƯA TRIỂN KHAI — file hiện đang rỗng, chưa có chức năng thực thi.
- * Việc cần làm: triển khai theo API contract và kiểu dữ liệu đã thống nhất; kiểm tra loading, error, empty và success phù hợp.
- * Lưu ý: không tự bịa endpoint hoặc response; dùng API contract thực tế và xử lý lỗi từ backend.
- */
+import { apiClient } from './apiClient'
+import type { Chapter, ChapterPage } from '../../types/chapter'
+
+export const chapterApi = {
+  async listByComic(comicId: number): Promise<Chapter[]> {
+    const { data } = await apiClient.get<Chapter[]>(`/api/comics/${comicId}/chapters`)
+    return data
+  },
+
+  async getById(chapterId: number): Promise<Chapter> {
+    const { data } = await apiClient.get<Chapter>(`/api/chapters/${chapterId}`)
+    return data
+  },
+
+  async getPages(chapterId: number): Promise<ChapterPage[]> {
+    const { data } = await apiClient.get<ChapterPage[]>(
+      `/api/chapters/${chapterId}/pages`,
+    )
+    return data
+  },
+
+  imageUrl(path: string): string {
+    if (/^https?:\/\//i.test(path)) return path
+    const baseUrl = apiClient.defaults.baseURL || window.location.origin
+    return new URL(path, baseUrl).toString()
+  },
+}

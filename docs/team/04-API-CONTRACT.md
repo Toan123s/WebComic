@@ -16,6 +16,8 @@ Các endpoint dưới đây là tham khảo/đề xuất, **không khẳng đị
 - Nếu code hiện có khác đề xuất, không tự phá tương thích; cập nhật contract sau khi thống nhất.
 - RBAC chỉ dùng role `USER`, `AUTHOR`, `MODERATOR`, `ADMIN` từ database; mọi route không được liệt kê public đều yêu cầu đăng nhập. Ma trận mapping route thực tế: [06-RBAC-MATRIX.md](./06-RBAC-MATRIX.md).
 
+Frontend Reader gọi các API đã triển khai trong tài liệu này. Khi chạy Vite local, `/api` được proxy tới `http://localhost:8080`; khi frontend và backend khác origin, cấu hình `VITE_API_BASE_URL` cho frontend và `app.cors.allowed-origin-patterns` cho backend. CORS chỉ cho phép các origin được cấu hình và không bật credential cookies; access token gửi qua header `Authorization`.
+
 ## 3. Auth
 | Method | Endpoint | Mục đích/trạng thái |
 |---|---|---|

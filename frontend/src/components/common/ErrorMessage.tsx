@@ -1,7 +1,21 @@
-/*
- * ComicHub | Phụ trách: Component dùng chung
- * Trách nhiệm: hiển thị lỗi.
- * Trạng thái: CHƯA TRIỂN KHAI — file hiện đang rỗng, chưa có chức năng thực thi.
- * Việc cần làm: triển khai theo API contract và kiểu dữ liệu đã thống nhất; kiểm tra loading, error, empty và success phù hợp.
- * Lưu ý: giữ đúng phạm vi module; không tự ý đổi cấu trúc hoặc thêm nghiệp vụ chưa thống nhất.
- */
+export function ErrorMessage({
+  message,
+  onRetry,
+}: {
+  message: string
+  onRetry?: () => void
+}) {
+  return (
+    <div className="reader-error" role="alert">
+      <div>
+        <strong>Không tải được dữ liệu</strong>
+        <p>{message}</p>
+      </div>
+      {onRetry && (
+        <button className="button button-secondary" onClick={onRetry} type="button">
+          Thử lại
+        </button>
+      )}
+    </div>
+  )
+}

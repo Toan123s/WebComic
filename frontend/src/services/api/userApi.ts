@@ -1,7 +1,22 @@
-/*
- * ComicHub | Phụ trách: TV2 — Frontend
- * Trách nhiệm: gọi API người dùng.
- * Trạng thái: CHƯA TRIỂN KHAI — file hiện đang rỗng, chưa có chức năng thực thi.
- * Việc cần làm: triển khai theo API contract và kiểu dữ liệu đã thống nhất; kiểm tra loading, error, empty và success phù hợp.
- * Lưu ý: không tự bịa endpoint hoặc response; dùng API contract thực tế và xử lý lỗi từ backend.
- */
+import { apiClient } from './apiClient'
+import type { UserProfile } from '../../types/auth'
+
+export interface UpdateUserProfile {
+  username: string
+  email: string
+  displayName: string | null
+  avatarUrl: string | null
+  bio: string | null
+}
+
+export const userApi = {
+  async getById(id: number): Promise<UserProfile> {
+    const { data } = await apiClient.get<UserProfile>(`/api/users/${id}`)
+    return data
+  },
+
+  async update(id: number, profile: UpdateUserProfile): Promise<UserProfile> {
+    const { data } = await apiClient.put<UserProfile>(`/api/users/${id}`, profile)
+    return data
+  },
+}

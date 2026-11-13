@@ -1,7 +1,38 @@
-/*
- * ComicHub | Phụ trách: TV2 phối hợp TV1
- * Trách nhiệm: khai báo kiểu TypeScript cho dữ liệu comic.
- * Trạng thái: CHƯA TRIỂN KHAI — file hiện đang rỗng, chưa có chức năng thực thi.
- * Việc cần làm: triển khai theo API contract và kiểu dữ liệu đã thống nhất; kiểm tra loading, error, empty và success phù hợp.
- * Lưu ý: kiểu dữ liệu phải khớp DTO/API thực tế; không tự giả định field chưa thống nhất.
- */
+export type PublicationStatus = 'ONGOING' | 'COMPLETED' | 'HIATUS'
+
+export interface ComicSummary {
+  id: number
+  title: string
+  slug: string
+  coverUrl: string | null
+  authorName: string | null
+  publicationStatus: PublicationStatus
+  ratingAvg: number | null
+  ratingCount: number
+  viewCount: number
+}
+
+export interface Comic extends ComicSummary {
+  authorId: number
+  description: string | null
+  moderationStatus: string
+  rejectReason: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ComicPage<T> {
+  content: T[]
+  page: number
+  size: number
+  totalElements: number
+  totalPages: number
+}
+
+export interface Category {
+  id: number
+  name: string
+  slug: string
+  description: string | null
+  createdAt: string
+}

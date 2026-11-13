@@ -1,7 +1,21 @@
-/*
- * ComicHub | Phụ trách: TV2 — Frontend
- * Trách nhiệm: gọi API lịch sử đọc.
- * Trạng thái: CHƯA TRIỂN KHAI — file hiện đang rỗng, chưa có chức năng thực thi.
- * Việc cần làm: triển khai theo API contract và kiểu dữ liệu đã thống nhất; kiểm tra loading, error, empty và success phù hợp.
- * Lưu ý: không tự bịa endpoint hoặc response; dùng API contract thực tế và xử lý lỗi từ backend.
- */
+import { apiClient } from './apiClient'
+import type { ReadingHistory } from '../../types/reader'
+
+export const readingHistoryApi = {
+  async list(): Promise<ReadingHistory[]> {
+    const { data } = await apiClient.get<ReadingHistory[]>('/api/reading-history')
+    return data
+  },
+
+  async saveProgress(chapterId: number, lastPageNumber: number): Promise<ReadingHistory> {
+    const { data } = await apiClient.put<ReadingHistory>(
+      '/api/reading-history/progress',
+      { chapterId, lastPageNumber },
+    )
+    return data
+  },
+
+  async remove(id: number): Promise<void> {
+    await apiClient.delete(`/api/reading-history/${id}`)
+  },
+}
