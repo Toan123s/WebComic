@@ -14,12 +14,13 @@ Các endpoint dưới đây là tham khảo/đề xuất, **không khẳng đị
 - Lấy user hiện tại từ principal; không nhận user identity từ body khi không cần.
 - Field/ID phải khớp DTO, Entity và SQL Server.
 - Nếu code hiện có khác đề xuất, không tự phá tương thích; cập nhật contract sau khi thống nhất.
+- RBAC chỉ dùng role `USER`, `AUTHOR`, `MODERATOR`, `ADMIN` từ database; mọi route không được liệt kê public đều yêu cầu đăng nhập. Ma trận mapping route thực tế: [06-RBAC-MATRIX.md](./06-RBAC-MATRIX.md).
 
 ## 3. Auth
 | Method | Endpoint | Mục đích/trạng thái |
 |---|---|---|
 | POST | `/api/auth/login` | IMPLEMENTED — public; đăng nhập và cấp access + refresh token |
-| POST | `/api/auth/register` | Register — PROPOSED |
+| POST | `/api/users` | IMPLEMENTED — public registration; server luôn gán role `USER`, không nhận role từ client |
 | POST | `/api/auth/refresh` | IMPLEMENTED — public; nhận refresh token hiện tại, rotate và cấp cặp token mới |
 | POST | `/api/auth/logout` | IMPLEMENTED — cần access token; thu hồi refresh token của đúng user/phiên hiện tại |
 
@@ -32,75 +33,107 @@ Schema hiện có đã đủ cột/unique constraint cho digest; không cần mi
 ## 4. User
 | Method | Endpoint | Mục đích/trạng thái |
 |---|---|---|
-| GET | `/api/users/me` | Profile hiện tại — xác minh contract |
-| PUT/PATCH | `/api/users/me` | Cập nhật profile — chốt method/DTO |
-| GET | `/api/users` | Danh sách user — role được phép |
-| GET | `/api/users/{id}` | Xem user — chốt quyền/dữ liệu public |
-| PATCH | `/api/users/{id}` | Cập nhật user — role/ownership |
+| GET | `/api/users` | IMPLEMENTED — chỉ ADMIN |
+| GET | `/api/users/{id}` | IMPLEMENTED — chính chủ hoặc ADMIN |
+| PUT | `/api/users/{id}` | IMPLEMENTED — chính chủ hoặc ADMIN; DTO không có role/status/password |
+| DELETE | `/api/users/{id}` | IMPLEMENTED — chỉ ADMIN |
 
-Đối chiếu User CRUD đã có trước khi thêm endpoint mới.
+Profile `/me`, role assignment, đổi trạng thái account và admin-specific user routes chưa có mapping HTTP; không xem User CRUD hiện có là API quản trị đầy đủ.
 
 ## 5. Comic và Category
 | Method | Endpoint | Mục đích |
 |---|---|---|
-| GET | `/api/comics` | Danh sách/tìm kiếm — PROPOSED |
-| GET | `/api/comics/{id}` | Chi tiết — PROPOSED |
-| POST | `/api/comics` | Tạo truyện — creator được phép |
-| PATCH | `/api/comics/{id}` | Sửa — kiểm tra ownership |
+| GET | `/api/comics` | IMPLEMENTED — danh sách Comic public hiện tại |
+| GET | `/api/comics/search` | IMPLEMENTED — tìm theo keyword/category/publicationStatus, phân trang |
+| GET | `/api/comics/{id}` | IMPLEMENTED — public nếu PUBLISHED; tài nguyên riêng chỉ owner/MODERATOR/ADMIN |
+| POST | `/api/comics` | IMPLEMENTED — AUTHOR; server gán owner và trạng thái DRAFT |
+| PATCH | `/api/comics/{id}` | IMPLEMENTED — AUTHOR sở hữu comic; published tạo revision |
 | GET | `/api/comics/{id}/revisions` | Lịch sử revision; giới hạn theo owner/MODERATOR/ADMIN |
-| DELETE | `/api/comics/{id}` | Xóa/ẩn — cần chốt policy |
-| PATCH | `/api/comics/{id}/publish` | Publish/unpublish — cần chốt trạng thái |
-| GET | `/api/moderation/comic-revisions/pending` | Hàng chờ duyệt revision — MODERATOR |
-| POST | `/api/moderation/comic-revisions/{revisionId}/approve` | Duyệt và áp dụng revision — MODERATOR |
-| POST | `/api/moderation/comic-revisions/{revisionId}/reject` | Từ chối revision, yêu cầu lý do — MODERATOR |
-| GET | `/api/categories` | Danh sách |
-| GET | `/api/categories/{id}` | Chi tiết |
-| POST | `/api/categories` | Tạo — role được phép |
-| PATCH | `/api/categories/{id}` | Sửa — role được phép |
-| DELETE | `/api/categories/{id}` | Xóa — chốt xử lý category đang dùng |
+| DELETE | `/api/comics/{id}` | IMPLEMENTED — AUTHOR sở hữu hoặc ADMIN; xóa mềm |
+| POST | `/api/comics/{id}/submit` | IMPLEMENTED — owner AUTHOR chuyển DRAFT/REJECTED sang PENDING |
+| PATCH | `/api/comics/{id}/publish` | IMPLEMENTED — chỉ ADMIN; chỉ chuyển APPROVED sang PUBLISHED |
+| GET | `/api/moderation/comic-revisions/pending` | IMPLEMENTED — MODERATOR/ADMIN |
+| POST | `/api/moderation/comic-revisions/{revisionId}/approve` | IMPLEMENTED — MODERATOR/ADMIN; không tự duyệt |
+| POST | `/api/moderation/comic-revisions/{revisionId}/reject` | IMPLEMENTED — MODERATOR/ADMIN; yêu cầu lý do, không tự từ chối |
+| GET | `/api/categories` | IMPLEMENTED — danh sách category public |
+| GET | `/api/categories/{id}` | IMPLEMENTED — chi tiết category |
+| POST | `/api/categories` | IMPLEMENTED — tạo category, ADMIN |
+| PATCH | `/api/categories/{id}` | IMPLEMENTED — sửa category, ADMIN |
+| DELETE | `/api/categories/{id}` | IMPLEMENTED — xóa nếu chưa gắn với Comic, ADMIN |
+| GET | `/api/comics/{comicId}/categories` | IMPLEMENTED — category của Comic; private Comic chỉ owner/MODERATOR/ADMIN |
+| PUT | `/api/comics/{comicId}/categories` | IMPLEMENTED — thay toàn bộ category IDs, AUTHOR sở hữu Comic ở DRAFT/REJECTED |
 
-Revision của truyện đã công khai lưu trong bảng `comic_revisions`. Khi cập nhật database đã có, chạy `database/migration/001_Create_Comic_Revisions.sql` một lần; migration có thể chạy lại an toàn và chỉ tạo bảng/index còn thiếu. Không chạy lại `Create_Tables.sql` trên database có dữ liệu vì script đó xóa và tạo lại toàn bộ schema.
+Tìm kiếm nhận `keyword` (tối đa 100 ký tự), `categoryId`, `publicationStatus` (`ONGOING`, `COMPLETED`, `HIATUS`), `page` (bắt đầu từ 0) và `size` (1–100, mặc định 20). Response gồm `content`, `page`, `size`, `totalElements`, `totalPages`. Xóa category đang được gắn trả `409`; category IDs lặp khi gắn vào Comic bị từ chối.
+
+Revision của truyện đã công khai lưu trong bảng `comic_revisions`. Khi cập nhật database đã có, chạy lần lượt migration chưa áp dụng: `database/migration/001_Create_Comic_Revisions.sql`, `database/migration/002_Allow_Moderation_Publish_Action.sql`, `database/migration/003_Create_Chapter_Revisions.sql`. Không chạy lại `Create_Tables.sql` trên database có dữ liệu vì script đó xóa và tạo lại toàn bộ schema.
 
 ## 6. Chapter và pages
 | Method | Endpoint | Mục đích |
 |---|---|---|
-| GET | `/api/comics/{comicId}/chapters` | Danh sách chapter |
-| GET | `/api/chapters/{chapterId}` | Chi tiết chapter |
-| POST | `/api/comics/{comicId}/chapters` | Tạo chapter — creator sở hữu comic |
-| PATCH | `/api/chapters/{chapterId}` | Sửa — kiểm tra ownership |
-| DELETE | `/api/chapters/{chapterId}` | Xóa/ẩn — chốt policy |
-| GET | `/api/chapters/{chapterId}/pages` | Danh sách trang |
-| POST | `/api/chapters/{chapterId}/pages` | Thêm trang — chốt upload/metadata |
-| PATCH | `/api/chapters/{chapterId}/pages/{pageId}` | Sửa metadata/thứ tự |
-| DELETE | `/api/chapters/{chapterId}/pages/{pageId}` | Xóa trang — chốt policy |
+| GET | `/api/comics/{comicId}/chapters` | IMPLEMENTED — public chỉ thấy chapter đã xuất bản; owner/MODERATOR/ADMIN xem được trạng thái quản lý |
+| GET | `/api/chapters/{chapterId}` | IMPLEMENTED — chi tiết chapter, ẩn chapter chưa public khỏi người không có quyền |
+| POST | `/api/comics/{comicId}/chapters` | IMPLEMENTED — AUTHOR sở hữu comic tạo chapter `DRAFT`; số chapter duy nhất trong comic |
+| PATCH | `/api/chapters/{chapterId}` | IMPLEMENTED — chỉ AUTHOR sở hữu comic sửa chapter `DRAFT/REJECTED` |
+| POST | `/api/chapters/{chapterId}/submit` | IMPLEMENTED — gửi duyệt khi comic `PUBLISHED` và chapter có ít nhất một trang |
+| DELETE | `/api/chapters/{chapterId}` | IMPLEMENTED — DRAFT/REJECTED xóa hẳn metadata và file; PUBLISHED ẩn mềm; không xóa PENDING |
+| POST | `/api/chapters/{chapterId}/revisions` | AUTHOR sở hữu chapter PUBLISHED tạo revision DRAFT từ snapshot metadata/trang hiện tại |
+| GET | `/api/chapters/{chapterId}/revisions` | Owner/MODERATOR/ADMIN xem lịch sử revision và snapshot pages |
+| PATCH | `/api/chapter-revisions/{revisionId}` | Owner AUTHOR cập nhật số/tên chapter khi revision còn DRAFT |
+| POST | `/api/chapter-revisions/{revisionId}/pages` | Owner AUTHOR upload thêm ảnh vào revision DRAFT; multipart field `files` |
+| DELETE | `/api/chapter-revision-pages/{pageId}` | Owner AUTHOR xóa trang khỏi revision DRAFT và đánh lại thứ tự |
+| DELETE | `/api/chapter-revisions/{revisionId}` | Owner AUTHOR xóa revision DRAFT |
+| POST | `/api/chapter-revisions/{revisionId}/submit` | Owner AUTHOR gửi revision có ít nhất một trang sang PENDING |
+| GET | `/api/chapter-revision-pages/{pageId}/image` | Owner/MODERATOR/ADMIN xem ảnh thuộc snapshot revision |
+| GET | `/api/chapters/{chapterId}/pages` | IMPLEMENTED — danh sách trang theo `page_number` |
+| POST | `/api/chapters/{chapterId}/pages` | IMPLEMENTED — multipart field `files`, upload nhiều ảnh theo thứ tự gửi; page number tự nối tiếp |
+| DELETE | `/api/chapter-pages/{pageId}` | IMPLEMENTED — xóa trang khỏi chapter DRAFT/REJECTED, đánh lại số trang liên tiếp |
+| GET | `/api/chapter-pages/{pageId}/image` | IMPLEMENTED — phục vụ ảnh; kiểm tra chapter public hoặc quyền owner/MODERATOR/ADMIN |
+| GET | `/api/moderation/chapters/pending` | IMPLEMENTED — danh sách chapter chờ duyệt, MODERATOR/ADMIN |
+| POST | `/api/moderation/chapters/{chapterId}/approve` | IMPLEMENTED — duyệt chapter thành `APPROVED`, MODERATOR/ADMIN; không tự duyệt |
+| POST | `/api/moderation/chapters/{chapterId}/reject` | IMPLEMENTED — từ chối chapter, bắt buộc có `note`, MODERATOR/ADMIN; không tự từ chối |
+| POST | `/api/chapters/{chapterId}/publish` | IMPLEMENTED — chỉ ADMIN; chỉ chapter `APPROVED` của comic `PUBLISHED` được chuyển sang `PUBLISHED` |
+| GET | `/api/moderation/chapter-revisions/pending` | MODERATOR/ADMIN xem chapter revisions đang chờ |
+| POST | `/api/moderation/chapter-revisions/{revisionId}/approve` | MODERATOR/ADMIN áp dụng snapshot; bản public cũ được thay trong transaction sau khi duyệt |
+| POST | `/api/moderation/chapter-revisions/{revisionId}/reject` | MODERATOR/ADMIN từ chối kèm note; giữ bản public cũ |
+
+Upload chỉ nhận JPEG/PNG/WebP; giới hạn mỗi ảnh và tổng request theo cấu hình multipart hiện tại (10 MB/ảnh, 50 MB/request mặc định). File lưu ở `app.upload.dir` với tên ngẫu nhiên do server tạo; DB lưu đường dẫn tương đối, response dùng API image endpoint. Chapter đã `PUBLISHED` được sửa thông qua chapter revision snapshot riêng; bản cũ vẫn public cho tới khi revision được duyệt. Bảng moderation logs ghi `APPROVE`, `REJECT`, `PUBLISH`; database cũ cần áp dụng migration `002` để cho phép action `PUBLISH`.
 
 ## 7. Comment, bookmark, follow, history, rating
+Các endpoint tương tác không được liệt kê là IMPLEMENTED bên dưới hiện chưa có controller mapping; các dòng NOT IMPLEMENTED là backlog contract, không phải route đang chạy.
 | Method | Endpoint | Mục đích |
 |---|---|---|
-| GET/POST | `/api/comics/{comicId}/comments` | Xem/tạo comment |
-| PATCH/DELETE | `/api/comments/{commentId}` | Sửa/xóa — owner/moderation |
-| GET/POST | `/api/bookmarks` | Danh sách/thêm bookmark |
-| DELETE | `/api/bookmarks/{id}` | Bỏ bookmark |
-| GET/POST | `/api/follows` | Danh sách/follow |
-| DELETE | `/api/follows/{id}` | Unfollow |
-| GET | `/api/reading-history` | History của user hiện tại |
-| DELETE | `/api/reading-history/{id}` | Xóa mục history |
-| PUT | `/api/comics/{comicId}/rating` | Tạo/cập nhật rating — chốt mô hình |
-| GET | `/api/comics/{comicId}/rating` | Xem rating/tổng hợp |
+| GET/POST | `/api/comics/{comicId}/comments` | NOT IMPLEMENTED — controller/service còn khung |
+| PATCH/DELETE | `/api/comments/{commentId}` | NOT IMPLEMENTED — controller/service còn khung |
+| GET | `/api/bookmarks` | Danh sách bookmark của user hiện tại |
+| POST | `/api/bookmarks` | Thêm bookmark (`{ "comicId": 123 }`) cho truyện đã PUBLISHED; trùng trả 409 |
+| DELETE | `/api/bookmarks/{id}` | Bỏ bookmark của user hiện tại; thành công trả 204 |
+| GET/POST | `/api/follows` | NOT IMPLEMENTED — controller/service còn khung |
+| DELETE | `/api/follows/{id}` | NOT IMPLEMENTED — controller/service còn khung |
+| GET | `/api/reading-history` | IMPLEMENTED — USER/AUTHOR xem tiến độ đọc của mình; chỉ hiện comic/chapter còn public |
+| PUT | `/api/reading-history/progress` | IMPLEMENTED — USER/AUTHOR ghi/cập nhật tiến độ; chỉ chapter PUBLISHED của comic PUBLISHED và số trang tồn tại |
+| DELETE | `/api/reading-history/{id}` | IMPLEMENTED — USER/AUTHOR chỉ xóa lịch sử của mình; thành công trả 204 |
+| PUT | `/api/comics/{comicId}/rating` | NOT IMPLEMENTED — controller/service còn khung |
+| GET | `/api/comics/{comicId}/rating` | NOT IMPLEMENTED — controller/service còn khung |
 
 Không cho client thao tác dữ liệu cá nhân của user khác.
 
+`PUT /api/reading-history/progress` nhận `{ "chapterId": 123, "lastPageNumber": 5 }`. Schema có một hàng cho mỗi cặp `(user_id, comic_id)`, do đó mỗi lần cập nhật sẽ thay thế tiến độ mới nhất của truyện đó. Response chứa thông tin comic/chapter, trang gần nhất, tổng số trang và thời điểm đọc. Guest và role khác USER/AUTHOR không được dùng các endpoint history.
+
 ## 8. Report/Admin
+Các API quản trị dưới đây có trạng thái được ghi rõ; NOT IMPLEMENTED là backlog, không phải route đang chạy.
 | Method | Endpoint | Mục đích |
 |---|---|---|
-| POST | `/api/reports` | Gửi report |
-| GET | `/api/admin/reports` | Danh sách — chốt role |
-| PATCH | `/api/admin/reports/{id}` | Xử lý — chốt trạng thái |
-| GET | `/api/admin/dashboard` | Thống kê |
-| GET | `/api/admin/moderation-logs` | Nhật ký moderation |
-| GET | `/api/admin/users` | Quản lý user |
-| PATCH | `/api/admin/users/{id}` | Cập nhật user theo quyền |
-| GET/POST/PATCH/DELETE | `/api/admin/categories` | Quản lý category — chốt route |
+| POST | `/api/reports` | NOT IMPLEMENTED — controller/service còn khung |
+| GET | `/api/admin/reports` | NOT IMPLEMENTED — controller/service còn khung |
+| PATCH | `/api/admin/reports/{id}` | NOT IMPLEMENTED — controller/service còn khung |
+| GET | `/api/admin/dashboard` | NOT IMPLEMENTED — controller/service còn khung |
+| GET | `/api/admin/roles` | ADMIN xem danh sách role được hỗ trợ |
+| GET | `/api/admin/users/{userId}/roles` | ADMIN xem role của một user |
+| PUT | `/api/admin/users/{userId}/roles` | ADMIN thay toàn bộ role; body `{ "roles": ["USER", "AUTHOR"] }`; không gỡ ADMIN cuối cùng đang hoạt động |
+| GET | `/api/admin/moderation-logs` | ADMIN xem log phân trang; hỗ trợ lọc `comicId`, `chapterId`, `moderatorId`, `action` |
+| GET | `/api/admin/users` | NOT IMPLEMENTED — User CRUD hiện ở `/api/users` |
+| PATCH | `/api/admin/users/{id}` | NOT IMPLEMENTED |
+| GET/POST/PATCH/DELETE | `/api/admin/categories` | NOT IMPLEMENTED — Category CRUD hiện ở `/api/categories`, ADMIN-only |
 
 ## 9. Pagination và lỗi
 Pagination đề xuất: `page`, `size`, `sort`; chốt page index (0 hay 1). Response phân trang có thể dùng `content`, `page`, `size`, `totalElements`, `totalPages` nếu khớp code.

@@ -27,6 +27,17 @@ Chỉ đánh dấu `[x]` sau khi chạy test. Chức năng chưa triển khai gh
 - [ ] Endpoint public vẫn truy cập được.
 - [ ] Response không chứa password hash/secret.
 - [ ] Refresh/logout chỉ test nếu đã triển khai.
+- [x] Role authority chỉ lấy từ DB và whitelist đúng USER/AUTHOR/MODERATOR/ADMIN; không có role mặc định khi user chưa được gán.
+- [x] Registration không nhận role và chỉ gán USER từ bảng roles.
+- [x] Service/controller chặn user không phải ADMIN khỏi danh sách user.
+- [x] Security filter chain trả 401 guest/invalid bearer, 403 authenticated sai role; public categories không cần token.
+- [x] MODERATOR và ADMIN được phép dùng moderation queue; USER không có role moderation.
+- [x] Owner không thể tự approve/reject comic/chapter/revision khi được cấp thêm role MODERATOR.
+- [x] Workflow comic/chapter buộc `PENDING → APPROVED → PUBLISHED`; chỉ ADMIN publish, không thể bỏ qua approve.
+- [x] Chỉ ADMIN được thay role; role không hợp lệ bị từ chối và không thể gỡ ADMIN cuối cùng đang hoạt động.
+- [x] Không thể xóa tài khoản ADMIN cuối cùng đang hoạt động.
+- [x] Chỉ ADMIN được xem moderation logs; bộ lọc action chỉ nhận APPROVE/REJECT/PUBLISH.
+- [ ] Full endpoint/ownership matrix được chạy trên SQL Server cho từng role; xem [06-RBAC-MATRIX.md](./06-RBAC-MATRIX.md).
 
 ## 4. User
 - [ ] Tạo user hợp lệ.
@@ -39,33 +50,40 @@ Chỉ đánh dấu `[x]` sau khi chạy test. Chức năng chưa triển khai gh
 - [ ] DTO không lộ dữ liệu nhạy cảm.
 
 ## 5. Comic/Category
-- [ ] Danh sách, search/filter/pagination theo contract.
+- [ ] Danh sách, search/filter/pagination trả đúng Comic public.
 - [ ] Chi tiết tài nguyên tồn tại/không tồn tại.
 - [ ] Public không xem comic chưa công khai.
 - [ ] Creator chỉ tạo/sửa comic của mình.
-- [ ] Publish đúng điều kiện.
+- [x] Moderator chỉ duyệt comic `PENDING` sang `APPROVED`; Admin chỉ publish comic `APPROVED`.
 - [ ] Sửa truyện đã public không làm thay đổi bản đang hiển thị trước khi duyệt revision.
 - [ ] Chỉ một revision PENDING mỗi truyện; duyệt áp dụng snapshot, từ chối lưu lý do và giữ bản public cũ.
-- [ ] Category trùng được xử lý.
-- [ ] Xóa category đang được sử dụng theo policy.
-- [ ] User thiếu quyền không quản lý category.
+- [ ] Category trùng tên/slug được xử lý; chỉ ADMIN quản lý taxonomy.
+- [ ] AUTHOR chỉ gắn category cho Comic của mình ở DRAFT/REJECTED.
+- [ ] Category không thể xóa khi đang được gắn với Comic.
+- [ ] User thiếu quyền không quản lý category hoặc Comic category mapping.
 
 ## 6. Chapter/pages/upload
-- [ ] Chapter thuộc comic hợp lệ.
-- [ ] Creator không quản lý chapter của người khác.
-- [ ] Thứ tự chapter/trang hợp lệ.
-- [ ] Public chỉ đọc nội dung được công khai.
-- [ ] Upload đúng loại/trong giới hạn.
-- [ ] File sai loại, quá lớn hoặc đường dẫn nguy hiểm bị từ chối.
-- [ ] Lỗi file/DB không để lại dữ liệu sai.
-- [ ] Xóa/thay file theo policy.
+- [ ] AUTHOR chỉ tạo/sửa chapter thuộc comic của mình.
+- [ ] Số chapter không trùng; chapter mới ở DRAFT.
+- [ ] Không gửi duyệt chapter rỗng hoặc thuộc comic chưa PUBLISHED.
+- [x] MODERATOR duyệt chapter `PENDING` thành `APPROVED` hoặc từ chối có lý do; ghi moderation log. ADMIN publish `APPROVED`.
+- [x] Revision chapter chỉ cho sửa ở DRAFT; bản public cũ giữ nguyên khi chờ duyệt và chỉ thay sau khi moderator duyệt snapshot.
+- [ ] Public chỉ xem chapter PUBLISHED của comic PUBLISHED; owner/moderator xem đúng phạm vi.
+- [ ] Upload nhiều ảnh gán `page_number` liên tiếp theo thứ tự request.
+- [ ] JPEG/PNG/WebP hợp lệ được lưu dưới tên do server tạo; file không phải ảnh/quá giới hạn bị từ chối.
+- [ ] API image không lộ file của chapter nháp cho người không có quyền.
+- [ ] Xóa trang chỉ ở DRAFT/REJECTED và đánh lại thứ tự; file chỉ bị xóa sau khi DB commit.
+- [ ] Xóa DRAFT/REJECTED dọn metadata và file; xóa PUBLISHED chỉ ẩn mềm; PENDING không xóa được.
+- [ ] Lỗi upload/DB rollback không để lại file mới hoặc metadata sai.
 
 ## 7. Comment/bookmark/follow/history/rating
 - [ ] Comment hợp lệ; user chỉ sửa/xóa comment của mình.
 - [ ] Comment ẩn không hiển thị sai.
-- [ ] Thêm/bỏ bookmark; không tạo bản ghi trùng.
+- [x] Thêm/bỏ bookmark; chỉ bookmark truyện PUBLISHED, không tạo bản ghi trùng và không thao tác bookmark của user khác.
 - [ ] Follow/unfollow đúng đối tượng; không tạo liên kết trùng.
-- [ ] History chỉ thuộc user hiện tại; không đọc/xóa history người khác.
+- [x] History chỉ thuộc user hiện tại; không đọc/xóa history người khác.
+- [x] USER/AUTHOR lưu được tiến độ của chapter public; chapter ẩn hoặc số trang không tồn tại bị từ chối.
+- [x] Tiến độ được upsert theo comic, không tạo nhiều hàng cho cùng user/comic.
 - [ ] Rating nằm trong phạm vi đã chốt.
 - [ ] Cập nhật rating không tạo dữ liệu trùng trái policy.
 - [ ] Tổng hợp rating đúng nếu đã triển khai.
@@ -106,5 +124,7 @@ Chỉ đánh dấu `[x]` sau khi chạy test. Chức năng chưa triển khai gh
 - [ ] Khi endpoint thật sẵn sàng, TV3 chạy lại cùng test trên backend thật và ghi actual status/body, pass/fail, môi trường/commit.
 - [ ] TV2 đã ghi rõ mock data ở đâu; mock không được dùng làm bằng chứng API thật thành công.
 - [ ] Khi contract/schema/permission thay đổi đã được nhóm chấp thuận, test, frontend types và tài liệu liên quan đã được cập nhật.
+
+Postman RBAC smoke collection: `backend/postman/ComicHub-RBAC.postman_collection.json`; environment `backend/postman/ComicHub-Local.postman_environment.json` chỉ chứa URL và token placeholder rỗng. Không commit token thật.
 
 **Mẫu bằng chứng:** Endpoint/ID test; contract version hoặc commit; request (đã loại secret); expected; actual; PASS/FAIL/BLOCKED; môi trường; người chạy; lỗi liên quan.

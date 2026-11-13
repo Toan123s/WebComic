@@ -1,10 +1,31 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: ChapterRepository.java
- * PHỤ TRÁCH: TV1 - Backend
- * MỤC ĐÍCH: Truy vấn persistence cho Chapter.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Chỉ xử lý truy vấn dữ liệu; nghiệp vụ và ownership thuộc Service.
- */
+package com.comichub.repository;
+
+import com.comichub.entity.Chapter;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+public interface ChapterRepository extends JpaRepository<Chapter, Long> {
+
+    @EntityGraph(attributePaths = {"comic", "comic.author", "reviewer"})
+    Optional<Chapter> findWithDetailsById(Long id);
+
+    @EntityGraph(attributePaths = {"comic", "comic.author"})
+    List<Chapter> findByComic_IdAndIsDeletedFalseAndStatusOrderByChapterNumberAsc(
+            Long comicId, String status);
+
+    @EntityGraph(attributePaths = {"comic", "comic.author"})
+    List<Chapter> findByComic_IdAndIsDeletedFalseOrderByChapterNumberAsc(Long comicId);
+
+    @EntityGraph(attributePaths = {"comic", "comic.author"})
+    List<Chapter> findByStatusAndIsDeletedFalseOrderByCreatedAtAsc(String status);
+
+    boolean existsByComic_IdAndChapterNumber(Long comicId, BigDecimal chapterNumber);
+
+    boolean existsByComic_IdAndChapterNumberAndIdNot(
+            Long comicId, BigDecimal chapterNumber, Long id);
+}
 

@@ -11,7 +11,39 @@
 package com.comichub.repository;
 
 import com.comichub.entity.ModerationLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ModerationLogRepository extends JpaRepository<ModerationLog, Long> {
+
+    @EntityGraph(attributePaths = {"comic", "chapter", "moderator"})
+    @Query(
+            value = """
+                    SELECT log
+                    FROM ModerationLog log
+                    LEFT JOIN log.chapter chapter
+                    WHERE (:comicId IS NULL OR log.comic.id = :comicId)
+                      AND (:chapterId IS NULL OR chapter.id = :chapterId)
+                      AND (:moderatorId IS NULL OR log.moderator.id = :moderatorId)
+                      AND (:action IS NULL OR log.action = :action)
+                    """,
+            countQuery = """
+                    SELECT COUNT(log)
+                    FROM ModerationLog log
+                    LEFT JOIN log.chapter chapter
+                    WHERE (:comicId IS NULL OR log.comic.id = :comicId)
+                      AND (:chapterId IS NULL OR chapter.id = :chapterId)
+                      AND (:moderatorId IS NULL OR log.moderator.id = :moderatorId)
+                      AND (:action IS NULL OR log.action = :action)
+                    """)
+    Page<ModerationLog> searchLogs(
+            @Param("comicId") Long comicId,
+            @Param("chapterId") Long chapterId,
+            @Param("moderatorId") Long moderatorId,
+            @Param("action") String action,
+            Pageable pageable);
 }

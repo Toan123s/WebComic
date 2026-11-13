@@ -1,10 +1,15 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: CategoryCreateRequest.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Thành phần backend CategoryCreateRequest.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Đối chiếu với API contract, schema và các thành phần liên quan trước khi triển khai.
- */
+package com.comichub.dto.category;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record CategoryCreateRequest(
+        @NotBlank(message = "Tên thể loại không được để trống")
+        @Size(max = 50, message = "Tên thể loại tối đa 50 ký tự")
+        String name,
+
+        @Size(max = 300, message = "Mô tả thể loại tối đa 300 ký tự")
+        String description
+) {
+}
 

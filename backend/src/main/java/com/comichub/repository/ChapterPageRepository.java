@@ -1,10 +1,22 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: ChapterPageRepository.java
- * PHỤ TRÁCH: TV1 - Backend
- * MỤC ĐÍCH: Truy vấn persistence cho ChapterPage.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Chỉ xử lý truy vấn dữ liệu; nghiệp vụ và ownership thuộc Service.
- */
+package com.comichub.repository;
+
+import com.comichub.entity.ChapterPage;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface ChapterPageRepository extends JpaRepository<ChapterPage, Long> {
+
+    @EntityGraph(attributePaths = {"chapter", "chapter.comic", "chapter.comic.author"})
+    List<ChapterPage> findByChapter_IdOrderByPageNumberAsc(Long chapterId);
+
+    @EntityGraph(attributePaths = {"chapter", "chapter.comic", "chapter.comic.author"})
+    Optional<ChapterPage> findWithDetailsById(Long id);
+
+    int countByChapter_Id(Long chapterId);
+
+    boolean existsByChapter_IdAndPageNumber(Long chapterId, Integer pageNumber);
+}
 

@@ -31,6 +31,10 @@ public class ModerationLog {
     private Comic comic;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chapter_id")
+    private Chapter chapter;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moderator_id", nullable = false)
     private User moderator;
 

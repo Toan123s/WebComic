@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,5 +45,36 @@ class CustomUserDetailsServiceTest {
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_AUTHOR")));
         assertTrue(details.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_USER")));
+    }
+
+    @Test
+    void ignoresRolesOutsideTheFourSupportedRoles() {
+        User user = new User();
+        user.setId(8L);
+        user.setUsername("unassigned");
+        user.setPasswordHash("hash");
+        user.setStatus("ACTIVE");
+        when(userRepository.findByUsername("unassigned")).thenReturn(Optional.of(user));
+        when(userRoleRepository.findRoleNamesByUserId(8L))
+                .thenReturn(List.of("GUEST", "SUPER_ADMIN", " "));
+
+        UserDetails details = service.loadUserByUsername("unassigned");
+
+        assertTrue(details.getAuthorities().isEmpty());
+    }
+
+    @Test
+    void disabledDatabaseAccountIsNotEnabled() {
+        User user = new User();
+        user.setId(9L);
+        user.setUsername("disabled");
+        user.setPasswordHash("hash");
+        user.setStatus("DISABLED");
+        when(userRepository.findByUsername("disabled")).thenReturn(Optional.of(user));
+        when(userRoleRepository.findRoleNamesByUserId(9L)).thenReturn(List.of("USER"));
+
+        UserDetails details = service.loadUserByUsername("disabled");
+
+        assertFalse(details.isEnabled());
     }
 }

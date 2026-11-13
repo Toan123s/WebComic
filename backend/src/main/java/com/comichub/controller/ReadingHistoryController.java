@@ -1,10 +1,46 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: ReadingHistoryController.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Điểm tiếp nhận HTTP cho chức năng ReadingHistory.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Khi triển khai: chốt endpoint/request/response/status theo API contract; validate input, gọi Service và kiểm tra quyền ở backend.
- */
+package com.comichub.controller;
 
+import com.comichub.dto.history.ReadingHistoryProgressRequest;
+import com.comichub.dto.history.ReadingHistoryResponse;
+import com.comichub.service.ReadingHistoryService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/reading-history")
+@PreAuthorize("hasAnyRole('USER', 'AUTHOR')")
+public class ReadingHistoryController {
+
+    private final ReadingHistoryService readingHistoryService;
+
+    public ReadingHistoryController(ReadingHistoryService readingHistoryService) {
+        this.readingHistoryService = readingHistoryService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReadingHistoryResponse>> getHistory() {
+        return ResponseEntity.ok(readingHistoryService.getHistory());
+    }
+
+    @PutMapping("/progress")
+    public ResponseEntity<ReadingHistoryResponse> saveProgress(
+            @Valid @RequestBody ReadingHistoryProgressRequest request) {
+        return ResponseEntity.ok(readingHistoryService.saveProgress(request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteHistory(@PathVariable Long id) {
+        readingHistoryService.deleteHistory(id);
+        return ResponseEntity.noContent().build();
+    }
+}

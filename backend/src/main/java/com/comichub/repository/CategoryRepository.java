@@ -1,10 +1,18 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: CategoryRepository.java
- * PHỤ TRÁCH: TV1 - Backend
- * MỤC ĐÍCH: Truy vấn persistence cho Category.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Chỉ xử lý truy vấn dữ liệu; nghiệp vụ và ownership thuộc Service.
- */
+package com.comichub.repository;
+
+import com.comichub.entity.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface CategoryRepository extends JpaRepository<Category, Integer> {
+
+    List<Category> findAllByOrderByNameAsc();
+
+    boolean existsByNameIgnoreCase(String name);
+
+    boolean existsByNameIgnoreCaseAndIdNot(String name, Integer id);
+
+    boolean existsBySlug(String slug);
+}
 

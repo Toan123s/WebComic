@@ -2,6 +2,7 @@ package com.comichub.service;
 
 import com.comichub.dto.comic.ComicCreateRequest;
 import com.comichub.dto.comic.ComicEditResponse;
+import com.comichub.dto.comic.ComicPageResponse;
 import com.comichub.dto.comic.ComicResponse;
 import com.comichub.dto.comic.ComicRevisionResponse;
 import com.comichub.dto.comic.ComicSummaryResponse;
@@ -21,6 +22,9 @@ import com.comichub.repository.UserRepository;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +40,7 @@ public class ComicService {
 
     private static final String DRAFT = "DRAFT";
     private static final String PENDING = "PENDING";
+    private static final String APPROVED = "APPROVED";
     private static final String REJECTED = "REJECTED";
     private static final String PUBLISHED = "PUBLISHED";
 
@@ -67,6 +72,52 @@ public class ComicService {
                 .stream()
                 .map(comicMapper::toSummaryResponse)
                 .toList();
+    }
+
+    public ComicPageResponse<ComicSummaryResponse> searchPublicComics(
+            String keyword,
+            Integer categoryId,
+            String publicationStatus,
+            int page,
+            int size) {
+        if (page < 0) {
+            throw new IllegalArgumentException("page không được nhỏ hơn 0");
+        }
+        if (size < 1 || size > 100) {
+            throw new IllegalArgumentException("size phải nằm trong khoảng 1 đến 100");
+        }
+        if (categoryId != null && categoryId <= 0) {
+            throw new IllegalArgumentException("categoryId phải là số nguyên dương");
+        }
+        if (keyword != null && keyword.length() > 100) {
+            throw new IllegalArgumentException("keyword tối đa 100 ký tự");
+        }
+
+        String keywordPattern = keyword == null || keyword.isBlank()
+                ? null
+                : "%" + keyword.trim().toLowerCase(Locale.ROOT) + "%";
+        String normalizedPublicationStatus = publicationStatus == null
+                || publicationStatus.isBlank()
+                ? null
+                : publicationStatus.trim().toUpperCase(Locale.ROOT);
+        if (normalizedPublicationStatus != null
+                && !List.of("ONGOING", "COMPLETED", "HIATUS")
+                        .contains(normalizedPublicationStatus)) {
+            throw new IllegalArgumentException("publicationStatus không hợp lệ");
+        }
+
+        Page<Comic> result = comicRepository.searchPublished(
+                PUBLISHED,
+                keywordPattern,
+                categoryId,
+                normalizedPublicationStatus,
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedAt")));
+        return new ComicPageResponse<>(
+                result.getContent().stream().map(comicMapper::toSummaryResponse).toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages());
     }
 
     public List<ComicSummaryResponse> getMyComics() {
@@ -171,7 +222,7 @@ public class ComicService {
     }
 
     public List<ComicResponse> getPendingComics() {
-        requireRole("MODERATOR");
+        requireModeratorOrAdmin();
         return comicRepository
                 .findByModerationStatusAndIsDeletedFalseOrderBySubmittedAtAsc(PENDING)
                 .stream()
@@ -181,7 +232,7 @@ public class ComicService {
 
     @Transactional
     public ComicResponse approveComic(Long id) {
-        requireRole("MODERATOR");
+        requireModeratorOrAdmin();
         Comic comic = findComicById(id);
         validateNotDeleted(comic);
         if (!PENDING.equals(comic.getModerationStatus())) {
@@ -189,11 +240,11 @@ public class ComicService {
         }
 
         User moderator = getCurrentUser();
+        rejectSelfModeration(comic, moderator);
         LocalDateTime now = LocalDateTime.now();
-        comic.setModerationStatus(PUBLISHED);
+        comic.setModerationStatus(APPROVED);
         comic.setReviewer(moderator);
         comic.setReviewedAt(now);
-        comic.setPublishedAt(now);
         comic.setRejectReason(null);
         comicRepository.save(comic);
         recordModeration(comic, moderator, "APPROVE", null, now);
@@ -201,8 +252,27 @@ public class ComicService {
     }
 
     @Transactional
+    public ComicResponse publishComic(Long id) {
+        requireRole("ADMIN");
+        validateId(id);
+        Comic comic = findComicById(id);
+        validateNotDeleted(comic);
+        if (!APPROVED.equals(comic.getModerationStatus())) {
+            throw new DuplicateResourceException(
+                    "Chỉ có thể xuất bản truyện đã được kiểm duyệt");
+        }
+
+        comic.setModerationStatus(PUBLISHED);
+        LocalDateTime now = LocalDateTime.now();
+        comic.setPublishedAt(now);
+        Comic savedComic = comicRepository.save(comic);
+        recordModeration(savedComic, getCurrentUser(), "PUBLISH", null, now);
+        return comicMapper.toResponse(savedComic);
+    }
+
+    @Transactional
     public ComicResponse rejectComic(Long id, String note) {
-        requireRole("MODERATOR");
+        requireModeratorOrAdmin();
         validateRejectNote(note);
         Comic comic = findComicById(id);
         validateNotDeleted(comic);
@@ -211,6 +281,7 @@ public class ComicService {
         }
 
         User moderator = getCurrentUser();
+        rejectSelfModeration(comic, moderator);
         LocalDateTime now = LocalDateTime.now();
         comic.setModerationStatus(REJECTED);
         comic.setReviewer(moderator);
@@ -222,7 +293,7 @@ public class ComicService {
     }
 
     public List<ComicRevisionResponse> getPendingRevisions() {
-        requireRole("MODERATOR");
+        requireModeratorOrAdmin();
         return comicRevisionRepository.findByStatusOrderBySubmittedAtAsc(PENDING)
                 .stream()
                 .filter(revision -> !Boolean.TRUE.equals(revision.getComic().getIsDeleted()))
@@ -255,17 +326,23 @@ public class ComicService {
 
     @Transactional
     public ComicRevisionResponse approveRevision(Long revisionId) {
-        requireRole("MODERATOR");
+        requireModeratorOrAdmin();
         ComicRevision revision = findPendingRevision(revisionId);
         Comic comic = revision.getComic();
         validateNotDeleted(comic);
+
+        User moderator = getCurrentUser();
+        rejectSelfModeration(comic, moderator);
+        if (revision.getSubmittedBy() != null
+                && Objects.equals(revision.getSubmittedBy().getId(), moderator.getId())) {
+            throw new AccessDeniedException("Không thể tự duyệt bản sửa của mình");
+        }
 
         comic.setTitle(revision.getTitle());
         comic.setDescription(revision.getDescription());
         comic.setCoverUrl(revision.getCoverUrl());
         comic.setPublicationStatus(revision.getPublicationStatus());
 
-        User moderator = getCurrentUser();
         LocalDateTime now = LocalDateTime.now();
         revision.setStatus("APPROVED");
         revision.setReviewer(moderator);
@@ -278,12 +355,17 @@ public class ComicService {
 
     @Transactional
     public ComicRevisionResponse rejectRevision(Long revisionId, String note) {
-        requireRole("MODERATOR");
+        requireModeratorOrAdmin();
         validateRejectNote(note);
         ComicRevision revision = findPendingRevision(revisionId);
         validateNotDeleted(revision.getComic());
 
         User moderator = getCurrentUser();
+        rejectSelfModeration(revision.getComic(), moderator);
+        if (revision.getSubmittedBy() != null
+                && Objects.equals(revision.getSubmittedBy().getId(), moderator.getId())) {
+            throw new AccessDeniedException("Không thể tự từ chối bản sửa của mình");
+        }
         LocalDateTime now = LocalDateTime.now();
         revision.setStatus(REJECTED);
         revision.setRejectReason(note.trim());
@@ -297,12 +379,15 @@ public class ComicService {
     @Transactional
     public void deleteComic(Long id) {
         validateId(id);
+        Authentication authentication = currentAuthentication();
+        if (!hasRole(authentication, "AUTHOR") && !hasRole(authentication, "ADMIN")) {
+            throw new AccessDeniedException("Bạn không có quyền thực hiện thao tác này");
+        }
         Comic comic = findComicById(id);
         validateNotDeleted(comic);
 
         User currentUser = getCurrentUser();
         boolean owner = comic.getAuthor().getId().equals(currentUser.getId());
-        Authentication authentication = currentAuthentication();
         if (!owner && !hasRole(authentication, "ADMIN")) {
             throw new AccessDeniedException("Bạn không có quyền xóa truyện này");
         }
@@ -385,6 +470,19 @@ public class ComicService {
     private void requireRole(String role) {
         if (!hasRole(currentAuthentication(), role)) {
             throw new AccessDeniedException("Bạn không có quyền thực hiện thao tác này");
+        }
+    }
+
+    private void requireModeratorOrAdmin() {
+        Authentication authentication = currentAuthentication();
+        if (!hasRole(authentication, "MODERATOR") && !hasRole(authentication, "ADMIN")) {
+            throw new AccessDeniedException("Bạn không có quyền thực hiện thao tác này");
+        }
+    }
+
+    private void rejectSelfModeration(Comic comic, User moderator) {
+        if (Objects.equals(comic.getAuthor().getId(), moderator.getId())) {
+            throw new AccessDeniedException("Không thể tự kiểm duyệt truyện của mình");
         }
     }
 

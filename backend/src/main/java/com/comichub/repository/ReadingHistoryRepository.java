@@ -1,10 +1,18 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: ReadingHistoryRepository.java
- * PHỤ TRÁCH: TV1 - Backend
- * MỤC ĐÍCH: Truy vấn persistence cho ReadingHistory.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Chỉ xử lý truy vấn dữ liệu; nghiệp vụ và ownership thuộc Service.
- */
+package com.comichub.repository;
 
+import com.comichub.entity.ReadingHistory;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface ReadingHistoryRepository extends JpaRepository<ReadingHistory, Long> {
+
+    @EntityGraph(attributePaths = {"comic", "chapter"})
+    List<ReadingHistory> findByUser_IdOrderByReadAtDesc(Long userId);
+
+    Optional<ReadingHistory> findByUser_IdAndComic_Id(Long userId, Long comicId);
+
+    Optional<ReadingHistory> findByIdAndUser_Id(Long id, Long userId);
+}

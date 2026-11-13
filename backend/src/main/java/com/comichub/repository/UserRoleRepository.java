@@ -17,9 +17,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleId> {
 
     @Query("select userRole.role.name from UserRole userRole where userRole.user.id = :userId")
     List<String> findRoleNamesByUserId(@Param("userId") Long userId);
+
+    @Query("select userRole from UserRole userRole join fetch userRole.role "
+            + "where userRole.user.id = :userId")
+    List<UserRole> findAssignmentsByUserId(@Param("userId") Long userId);
+
+    long countByRole_NameAndUser_Status(String roleName, String status);
 }

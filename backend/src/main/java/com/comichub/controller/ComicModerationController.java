@@ -3,7 +3,11 @@ package com.comichub.controller;
 import com.comichub.dto.comic.ComicResponse;
 import com.comichub.dto.comic.ComicRevisionResponse;
 import com.comichub.dto.comic.ModerationDecisionRequest;
+import com.comichub.dto.chapter.ChapterResponse;
+import com.comichub.dto.chapter.ChapterRevisionResponse;
 import com.comichub.service.ComicService;
+import com.comichub.service.ChapterService;
+import com.comichub.service.ChapterRevisionService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,13 +22,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/moderation")
-@PreAuthorize("hasRole('MODERATOR')")
+@PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
 public class ComicModerationController {
 
     private final ComicService comicService;
+    private final ChapterService chapterService;
+    private final ChapterRevisionService chapterRevisionService;
 
-    public ComicModerationController(ComicService comicService) {
+    public ComicModerationController(
+            ComicService comicService,
+            ChapterService chapterService,
+            ChapterRevisionService chapterRevisionService) {
         this.comicService = comicService;
+        this.chapterService = chapterService;
+        this.chapterRevisionService = chapterRevisionService;
     }
 
     @GetMapping("/comics/pending")
@@ -61,6 +72,43 @@ public class ComicModerationController {
             @PathVariable Long revisionId,
             @Valid @RequestBody(required = false) ModerationDecisionRequest request) {
         return ResponseEntity.ok(comicService.rejectRevision(
+                revisionId, request == null ? null : request.note()));
+    }
+
+    @GetMapping("/chapters/pending")
+    public ResponseEntity<List<ChapterResponse>> getPendingChapters() {
+        return ResponseEntity.ok(chapterService.getPendingChapters());
+    }
+
+    @PostMapping("/chapters/{chapterId}/approve")
+    public ResponseEntity<ChapterResponse> approveChapter(@PathVariable Long chapterId) {
+        return ResponseEntity.ok(chapterService.approveChapter(chapterId));
+    }
+
+    @PostMapping("/chapters/{chapterId}/reject")
+    public ResponseEntity<ChapterResponse> rejectChapter(
+            @PathVariable Long chapterId,
+            @Valid @RequestBody(required = false) ModerationDecisionRequest request) {
+        return ResponseEntity.ok(chapterService.rejectChapter(
+                chapterId, request == null ? null : request.note()));
+    }
+
+    @GetMapping("/chapter-revisions/pending")
+    public ResponseEntity<List<ChapterRevisionResponse>> getPendingChapterRevisions() {
+        return ResponseEntity.ok(chapterRevisionService.getPendingRevisions());
+    }
+
+    @PostMapping("/chapter-revisions/{revisionId}/approve")
+    public ResponseEntity<ChapterRevisionResponse> approveChapterRevision(
+            @PathVariable Long revisionId) {
+        return ResponseEntity.ok(chapterRevisionService.approve(revisionId));
+    }
+
+    @PostMapping("/chapter-revisions/{revisionId}/reject")
+    public ResponseEntity<ChapterRevisionResponse> rejectChapterRevision(
+            @PathVariable Long revisionId,
+            @Valid @RequestBody(required = false) ModerationDecisionRequest request) {
+        return ResponseEntity.ok(chapterRevisionService.reject(
                 revisionId, request == null ? null : request.note()));
     }
 }

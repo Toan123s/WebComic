@@ -1,10 +1,19 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: ChapterResponse.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Thành phần backend ChapterResponse.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Đối chiếu với API contract, schema và các thành phần liên quan trước khi triển khai.
- */
+package com.comichub.dto.chapter;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record ChapterResponse(
+        Long id,
+        Long comicId,
+        BigDecimal chapterNumber,
+        String title,
+        String status,
+        String rejectReason,
+        Integer pageCount,
+        Long viewCount,
+        LocalDateTime publishedAt,
+        LocalDateTime createdAt
+) {
+}
 

@@ -3,8 +3,8 @@
  * FILE: CustomUserDetailsService.java
  * PHỤ TRÁCH: TV1 - Backend và Security
  * MỤC ĐÍCH: Nạp tài khoản cho Spring Security.
- * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
- * CÒN THIẾU: Kiểm thử tìm theo username/email và trường hợp không tìm thấy; rà lại lỗi login.
+ * TRẠNG THÁI: ĐỌC ROLE TỪ DATABASE, CHỈ CẤP BỐN ROLE ĐƯỢC HỖ TRỢ.
+ * CÒN THIẾU: Role management HTTP chưa được triển khai.
  * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
  */
 
@@ -21,8 +21,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
+import java.util.Set;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+
+    private static final Set<String> ALLOWED_ROLES =
+            Set.of("USER", "AUTHOR", "MODERATOR", "ADMIN");
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
@@ -48,6 +54,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .password(user.getPasswordHash())
                 .authorities(userRoleRepository.findRoleNamesByUserId(user.getId())
                         .stream()
+                        .map(role -> role == null ? "" : role.trim().toUpperCase(Locale.ROOT))
+                        .filter(ALLOWED_ROLES::contains)
                         .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                         .toList())
                 .disabled(!"ACTIVE".equalsIgnoreCase(user.getStatus()))

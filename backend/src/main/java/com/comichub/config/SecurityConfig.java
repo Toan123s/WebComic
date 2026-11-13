@@ -3,8 +3,8 @@
  * FILE: SecurityConfig.java
  * PHỤ TRÁCH: TV1 - Backend và Security
  * MỤC ĐÍCH: Cấu hình Spring Security và quy tắc truy cập.
- * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — CHƯA XÁC MINH.
- * CÒN THIẾU: Kiểm thử public/protected endpoint, JWT, CORS, 401/403 và quyền theo role.
+ * TRẠNG THÁI: ĐÃ CẤU HÌNH PUBLIC/PROTECTED VÀ STATUS 401/403.
+ * CÒN THIẾU: Cần tiếp tục rà soát khi bổ sung endpoint mới.
  * LƯU Ý: Header mô tả trạng thái đọc từ mã nguồn; không thay thế review hoặc bằng chứng kiểm thử.
  */
 
@@ -27,6 +27,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -67,6 +69,12 @@ public class SecurityConfig {
                         jwtService,
                         userDetailsService
                 );
+        AuthenticationEntryPoint authenticationEntryPoint =
+                (request, response, exception) -> response.sendError(
+                        401, "Cần xác thực để truy cập tài nguyên này");
+        AccessDeniedHandler accessDeniedHandler =
+                (request, response, exception) -> response.sendError(
+                        403, "Bạn không có quyền thực hiện thao tác này");
 
         http
                 // API sử dụng JWT nên tắt CSRF cho cấu hình stateless này
@@ -90,22 +98,33 @@ public class SecurityConfig {
                                 "/api/auth/refresh"
                         ).permitAll()
 
-                        // Tạm mở API tạo người dùng để phục vụ kiểm thử
+                        // Public registration creates only the default USER role.
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/users"
                         ).permitAll()
 
-                        // Danh sách/chi tiết public tự lọc truyện đã duyệt trong Service.
+                        // Public reads; service methods still filter non-public resources.
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/comics",
-                                "/api/comics/**"
+                                "/api/comics/search",
+                                "/api/comics/*",
+                                "/api/comics/*/chapters",
+                                "/api/comics/*/categories",
+                                "/api/chapters/*",
+                                "/api/chapters/*/pages",
+                                "/api/chapter-pages/*/image",
+                                "/api/categories",
+                                "/api/categories/*"
                         ).permitAll()
 
                         // Những API còn lại phải đăng nhập
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
 
                 // Chạy JWT filter trước filter xác thực username/password
                 .addFilterBefore(

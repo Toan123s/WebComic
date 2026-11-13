@@ -1,3 +1,9 @@
+/*
+ * ComicHub | Phụ trách: TV2 — Frontend
+ * Trách nhiệm: định nghĩa style cho ứng dụng.
+ * Trạng thái: đã có CSS; cần rà soát khi các layout/page ComicHub được triển khai.
+ * Lưu ý: tránh để style demo Vite ảnh hưởng các khu vực Reader, Creator Studio và Admin.
+ */
 .counter {
   font-size: 16px;
   padding: 5px 10px;

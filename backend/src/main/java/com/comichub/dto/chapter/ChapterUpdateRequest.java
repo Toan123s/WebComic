@@ -1,10 +1,20 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: ChapterUpdateRequest.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Thành phần backend ChapterUpdateRequest.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Đối chiếu với API contract, schema và các thành phần liên quan trước khi triển khai.
- */
+package com.comichub.dto.chapter;
+
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Size;
+
+import java.math.BigDecimal;
+
+public record ChapterUpdateRequest(
+        @DecimalMin(value = "0.1", message = "Số chapter phải lớn hơn 0")
+        @DecimalMax(value = "99999.9", message = "Số chapter vượt giới hạn")
+        @Digits(integer = 5, fraction = 1, message = "Số chapter chỉ hỗ trợ tối đa 1 chữ số thập phân")
+        BigDecimal chapterNumber,
+
+        @Size(max = 200, message = "Tiêu đề chapter tối đa 200 ký tự")
+        String title
+) {
+}
 

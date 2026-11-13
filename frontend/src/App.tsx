@@ -1,3 +1,9 @@
+/*
+ * ComicHub | Phụ trách: TV2 — Frontend
+ * Trạng thái: CÒN MÃ KHỞI TẠO VITE, CHƯA PHẢI GIAO DIỆN COMICHUB HOÀN CHỈNH.
+ * Việc cần làm: thay nội dung demo bằng điểm vào/điều hướng ứng dụng theo cấu trúc đã thống nhất.
+ * Lưu ý: giữ nguyên cấu trúc dự án; kết nối routes/layouts khi các phần đó được triển khai.
+ */
 import { useState } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'

@@ -82,6 +82,28 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
+    void rejectsTokenForDisabledDatabaseAccount() throws ServletException, IOException {
+        UserDetails disabledUser = org.springframework.security.core.userdetails.User
+                .withUsername("disabled")
+                .password("unused")
+                .authorities("ROLE_USER")
+                .disabled(true)
+                .build();
+        when(userDetailsService.loadUserByUsername("disabled")).thenReturn(disabledUser);
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization",
+                "Bearer " + jwtService.generateAccessToken("disabled"));
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FilterChain chain = mock(FilterChain.class);
+
+        filter.invoke(request, response, chain);
+
+        assertEquals(401, response.getStatus());
+        verify(chain, never()).doFilter(request, response);
+    }
+
+    @Test
     void letsRequestsWithoutBearerCredentialsContinue()
             throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();

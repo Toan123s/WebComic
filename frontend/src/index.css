@@ -1,3 +1,9 @@
+/*
+ * ComicHub | Phụ trách: TV2 — Frontend
+ * Trách nhiệm: định nghĩa style toàn cục và biến giao diện.
+ * Trạng thái: đã có CSS; cần rà soát khi các layout/page ComicHub được triển khai.
+ * Lưu ý: tránh để style demo Vite ảnh hưởng các khu vực Reader, Creator Studio và Admin.
+ */
 :root {
   --text: #6b6375;
   --text-h: #08060d;

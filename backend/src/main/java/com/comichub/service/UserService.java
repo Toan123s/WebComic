@@ -7,23 +7,30 @@ package com.comichub.service;
  * FILE: UserService.java
  * PHỤ TRÁCH: TV1 - Backend và Security
  * MỤC ĐÍCH: Xử lý nghiệp vụ cho chức năng User.
- * TRẠNG THÁI: ĐÃ CÓ MÃ NGUỒN — chưa kết luận hoàn thành; cần kiểm thử theo task.
- * CÒN THIẾU: Cần xác nhận tiêu chí hoàn thành, kiểm thử phù hợp và cập nhật trạng thái sau khi hoàn tất.
+ * TRẠNG THÁI: CRUD CÓ OWNERSHIP; REGISTRATION CHỈ GÁN ROLE USER.
+ * CÒN THIẾU: Role assignment/admin status management chưa có API.
  * LƯU Ý: Triển khai validation nghiệp vụ, ownership/trạng thái, lỗi và transaction khi cần; phối hợp schema/API contract.
  */
 
 import com.comichub.dto.user.UserCreateRequest;
 import com.comichub.dto.user.UserUpdateRequest;
 import com.comichub.dto.user.UserResponse;
+import com.comichub.entity.Role;
 import com.comichub.entity.User;
+import com.comichub.entity.UserRole;
 import com.comichub.exception.DuplicateResourceException;
 import com.comichub.exception.ResourceNotFoundException;
 import com.comichub.mapper.UserMapper;
+import com.comichub.repository.RoleRepository;
 import com.comichub.repository.UserRepository;
-
+import com.comichub.repository.UserRoleRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Isolation;
 
 import java.util.List;
 
@@ -34,19 +41,26 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
 
     public UserService(
             UserRepository userRepository,
             UserMapper userMapper,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            RoleRepository roleRepository,
+            UserRoleRepository userRoleRepository) {
 
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     // READ: Lấy danh sách người dùng
     public List<UserResponse> getAllUsers() {
+        requireRole("ADMIN");
         return userRepository.findAll()
                 .stream()
                 .map(userMapper::toResponse)
@@ -58,6 +72,7 @@ public class UserService {
         validateId(id);
 
         User user = findUserById(id);
+        requireSelfOrAdmin(user);
 
         return userMapper.toResponse(user);
     }
@@ -91,6 +106,13 @@ public class UserService {
         user.setStatus("ACTIVE");
 
         User savedUser = userRepository.save(user);
+        Role defaultRole = roleRepository.findByName("USER")
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy role mặc định USER"));
+        UserRole userRole = new UserRole();
+        userRole.setUser(savedUser);
+        userRole.setRole(defaultRole);
+        userRoleRepository.save(userRole);
 
         return userMapper.toResponse(savedUser);
     }
@@ -104,6 +126,7 @@ public class UserService {
         validateId(id);
 
         User user = findUserById(id);
+        requireSelfOrAdmin(user);
 
         if (userRepository.existsByUsernameAndIdNot(
                 request.username(), id)) {
@@ -142,11 +165,19 @@ public class UserService {
     }
 
     // DELETE: Xóa người dùng
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void deleteUser(Long id) {
+        requireRole("ADMIN");
         validateId(id);
 
         User user = findUserById(id);
+        boolean activeAdmin = "ACTIVE".equals(user.getStatus())
+                && userRoleRepository.findRoleNamesByUserId(id).contains("ADMIN");
+        if (activeAdmin
+                && userRoleRepository.countByRole_NameAndUser_Status("ADMIN", "ACTIVE") <= 1) {
+            throw new DuplicateResourceException(
+                    "Không thể xóa tài khoản ADMIN cuối cùng đang hoạt động");
+        }
 
         userRepository.delete(user);
     }
@@ -166,5 +197,41 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Không tìm thấy người dùng có ID: " + id
                 ));
+    }
+
+    private void requireSelfOrAdmin(User user) {
+        Authentication authentication = currentAuthentication();
+        if (hasRole(authentication, "ADMIN")) {
+            return;
+        }
+        if (!isAuthenticated(authentication)) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập");
+        }
+        User currentUser = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy tài khoản: " + authentication.getName()));
+        if (!user.getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("Bạn không có quyền truy cập tài khoản này");
+        }
+    }
+
+    private void requireRole(String role) {
+        if (!hasRole(currentAuthentication(), role)) {
+            throw new AccessDeniedException("Bạn không có quyền thực hiện thao tác này");
+        }
+    }
+
+    private boolean hasRole(Authentication authentication, String role) {
+        return authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(authority -> ("ROLE_" + role).equals(authority.getAuthority()));
+    }
+
+    private boolean isAuthenticated(Authentication authentication) {
+        return authentication != null && authentication.isAuthenticated()
+                && !"anonymousUser".equals(authentication.getPrincipal());
+    }
+
+    private Authentication currentAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 }
