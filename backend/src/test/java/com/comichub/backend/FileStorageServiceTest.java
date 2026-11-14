@@ -53,6 +53,28 @@ class FileStorageServiceTest {
                 () -> service.storeChapterPage(file, 3L, 7L));
     }
 
+    @Test
+    void rejectsImageLargerThanConfiguredLimit() throws Exception {
+        FileStorageService service = new FileStorageService(
+                uploadDirectory.toString(), DataSize.ofBytes(8));
+        MockMultipartFile file = new MockMultipartFile(
+                "files", "large.png", "image/png", createPng());
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.storeChapterPage(file, 3L, 7L));
+    }
+
+    @Test
+    void rejectsPathsOutsideUploadDirectory() {
+        FileStorageService service = new FileStorageService(
+                uploadDirectory.toString(), DataSize.ofMegabytes(10));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.resolveStoredFile("..\\outside.txt"));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.delete("..\\outside.txt"));
+    }
+
     private byte[] createPng() throws Exception {
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         ByteArrayOutputStream output = new ByteArrayOutputStream();

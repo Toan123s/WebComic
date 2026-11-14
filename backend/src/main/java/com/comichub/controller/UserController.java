@@ -54,6 +54,11 @@ public class UserController {
         );
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUserProfile() {
+        return ResponseEntity.ok(userService.getCurrentUserProfile());
+    }
+
     // CREATE: Tạo người dùng
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
@@ -76,6 +81,12 @@ public class UserController {
         return ResponseEntity.ok(
                 userService.updateUser(id, request)
         );
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserResponse> updateCurrentUserProfile(
+            @Valid @RequestBody UserUpdateRequest request) {
+        return ResponseEntity.ok(userService.updateCurrentUserProfile(request));
     }
 
     // DELETE: Xóa người dùng

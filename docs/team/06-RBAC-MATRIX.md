@@ -20,6 +20,7 @@ HTTP status: anonymous tới API riêng tư `401`; authenticated nhưng thiếu 
 | GET | `/api/users/{id}` | Authenticated; user chính chủ hoặc `ADMIN` | Người khác bị `403` | `UserServiceTest`; chưa có MVC owner test |
 | PUT | `/api/users/{id}` | Authenticated; user chính chủ hoặc `ADMIN` | DTO chỉ cập nhật username/email/profile, không có role/status/password | Service kiểm tra ownership; chưa có MVC owner test |
 | DELETE | `/api/users/{id}` | `ADMIN` | Chỉ admin xóa tài khoản | `SecurityAuthorizationIntegrationTest` kiểm tra role list; chưa có delete MVC test |
+| GET/PUT | `/api/users/me` | Authenticated | Luôn thao tác trên tài khoản lấy từ principal; profile DTO không đổi role/status/password | `SecurityAuthorizationIntegrationTest` (SQL Server) |
 | GET | `/api/comics` | Public | Chỉ comic `PUBLISHED`, chưa xóa | SQL Server `BackendApplicationTests` |
 | GET | `/api/comics/search` | Public | Chỉ comic `PUBLISHED`; bộ lọc và phân trang được validate | `ComicServiceTest`, SQL Server `BackendApplicationTests` |
 | GET | `/api/comics/{id}` | Public nếu đã xuất bản; nếu không thì owner/`MODERATOR`/`ADMIN` | Comic private không tiết lộ cho người khác (`404`) | Service rule; chưa có MVC status test |
@@ -73,6 +74,11 @@ HTTP status: anonymous tới API riêng tư `401`; authenticated nhưng thiếu 
 | GET | `/api/reading-history` | Authenticated `USER` hoặc `AUTHOR` | Chỉ tiến độ user hiện tại; không trả nội dung đã ẩn/unpublished | `ReadingHistoryServiceTest` |
 | PUT | `/api/reading-history/progress` | Authenticated `USER` hoặc `AUTHOR` | Upsert tiến độ theo user/comic; chapter phải public và trang phải tồn tại | `ReadingHistoryServiceTest` |
 | DELETE | `/api/reading-history/{id}` | Authenticated `USER` hoặc `AUTHOR` | Chỉ xóa lịch sử thuộc user hiện tại | `ReadingHistoryServiceTest` |
+| GET/POST | `/api/follows` | Authenticated `USER` hoặc `AUTHOR` | Chỉ dữ liệu user hiện tại; target là Comic public hoặc creator ACTIVE/AUTHOR; follow trùng trả `409` | `FollowRatingNotificationIntegrationTest` (SQL Server) |
+| PATCH/DELETE | `/api/follows/{followId}` | Authenticated `USER` hoặc `AUTHOR` | Chỉ cập nhật/xóa follow thuộc user hiện tại; notification preference theo từng follow | `FollowRatingNotificationIntegrationTest` (SQL Server) |
+| GET | `/api/notifications`, `/api/notifications/unread-count` | Authenticated `USER` hoặc `AUTHOR` | Chỉ danh sách/count notification của user hiện tại; phân trang tối đa 100 | `FollowRatingNotificationIntegrationTest` (SQL Server) |
+| PATCH | `/api/notifications/{notificationId}/read`, `/api/notifications/read-all` | Authenticated `USER` hoặc `AUTHOR` | Chỉ đánh dấu notification thuộc user hiện tại | `FollowRatingNotificationIntegrationTest` (SQL Server) |
+| GET/PUT | `/api/comics/{comicId}/rating` | Authenticated `USER` hoặc `AUTHOR` | Mỗi user một rating/Comic; score 1–5; review tối đa 300; AUTHOR không tự chấm Comic của mình | `FollowRatingNotificationIntegrationTest`, `RatingServiceTest` |
 | GET | `/api/comics/{comicId}/comments` | Public; người viết/`MODERATOR`/`ADMIN` thấy thêm trạng thái riêng | Public chỉ thấy VISIBLE; người viết chỉ thấy comment của mình; moderator thấy hàng đợi theo trạng thái | `CommentServiceTest` |
 | POST | `/api/comics/{comicId}/comments` | `USER` hoặc `AUTHOR` | Chỉ comment lên comic/chapter public; comment mới PENDING; reply phải trỏ comment VISIBLE cùng vị trí | `CommentServiceTest` |
 | PATCH | `/api/comments/{commentId}` | `USER` hoặc `AUTHOR`, owner | Comment VISIBLE/REJECTED sửa xong quay lại PENDING; HIDDEN/DELETED không sửa được | `CommentServiceTest` |
@@ -90,9 +96,8 @@ HTTP status: anonymous tới API riêng tư `401`; authenticated nhưng thiếu 
 
 ## Chưa có endpoint HTTP — không tính là đã triển khai
 
-Các controller/service tương ứng hiện là file khung, không có method mapping; không bổ sung route trong công việc RBAC này:
+Các route sau chưa có mapping HTTP:
 
-- Follow; rating đang có thay đổi cục bộ nhưng chưa xác minh.
 - API profile `/me`, upload tổng quát và các route quản trị khác trong API contract cũ.
 
 Đăng ký chỉ gán role `USER`; ADMIN dùng `/api/admin/users/{userId}/roles` để thay toàn bộ role, với các bảo vệ chống gỡ/xóa ADMIN cuối cùng đang hoạt động.
@@ -104,6 +109,7 @@ Report có trạng thái `OPEN → IN_PROGRESS → RESOLVED/REJECTED`; migration
 | Lệnh | Phạm vi | Kết quả |
 |---|---|---|
 | `.\mvnw.cmd -Dtest=BackendApplicationTests,SecurityAuthorizationIntegrationTest,UserServiceTest,CustomUserDetailsServiceTest,ComicServiceTest,ChapterServiceTest,BookmarkServiceTest,JwtAuthenticationFilterTest test` | Unit + Spring Security integration + SQL Server role/ownership | PASS — 48 tests, 0 failures/errors (lần chạy targeted trước các test bổ sung cuối) |
+| `.\mvnw.cmd "-Dtest=FollowRatingNotificationIntegrationTest,RatingServiceTest,ChapterServiceTest,UserServiceTest" test` | Follow/notification/rating và phụ thuộc trực tiếp trên SQL Server | PASS — 25 tests, 0 failures/errors |
 | `.\mvnw.cmd test` | Full suite sau cập nhật RBAC/workflow, Reading History, role/admin logs và chapter revision | Cập nhật sau khi chạy trên DB đã áp dụng migration `002` và `003` |
 
 `SecurityAuthorizationIntegrationTest` dùng Spring Security filter chain thực tế với mock principal (không phát JWT); test ownership tạo dữ liệu tạm trong SQL Server trong transaction rollback. Không xem đây là JWT end-to-end. JWT được kiểm tra riêng bởi `JwtAuthenticationFilterTest`; `BackendApplicationTests` xác minh role mapping `user_roles` trên SQL Server. Test Mockito chỉ chứng minh logic service với repository mock, không được xem là DB integration.

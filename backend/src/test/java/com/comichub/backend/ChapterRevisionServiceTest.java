@@ -16,6 +16,7 @@ import com.comichub.repository.ModerationLogRepository;
 import com.comichub.repository.UserRepository;
 import com.comichub.service.ChapterRevisionService;
 import com.comichub.service.FileStorageService;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,8 +28,18 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.unit.DataSize;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,6 +72,9 @@ class ChapterRevisionServiceTest {
 
     @InjectMocks
     private ChapterRevisionService chapterRevisionService;
+
+    @TempDir
+    Path uploadDirectory;
 
     private User author;
     private Comic comic;
@@ -87,6 +102,9 @@ class ChapterRevisionServiceTest {
     @AfterEach
     void clearContext() {
         SecurityContextHolder.clearContext();
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
     }
 
     @Test
@@ -170,6 +188,40 @@ class ChapterRevisionServiceTest {
         verify(chapterRepository, never()).save(any(Chapter.class));
     }
 
+    @Test
+    void databaseFailureDuringRevisionUploadRemovesUploadedFiles() throws Exception {
+        chapterRevisionService = new ChapterRevisionService(
+                revisionRepository,
+                revisionPageRepository,
+                chapterRepository,
+                chapterPageRepository,
+                userRepository,
+                moderationLogRepository,
+                new FileStorageService(uploadDirectory.toString(), DataSize.ofMegabytes(10)));
+        ChapterRevision revision = revision(31L, "DRAFT", author);
+        when(revisionRepository.findWithDetailsById(31L)).thenReturn(Optional.of(revision));
+        when(userRepository.findByUsername("author")).thenReturn(Optional.of(author));
+        when(revisionPageRepository.findByRevision_IdOrderByPageNumberAsc(31L))
+                .thenReturn(List.of());
+        doThrow(new DataIntegrityViolationException("test persistence failure"))
+                .when(revisionPageRepository).saveAllAndFlush(anyList());
+        TransactionSynchronizationManager.initSynchronization();
+
+        assertThrows(DataIntegrityViolationException.class,
+                () -> chapterRevisionService.uploadPages(31L, List.of(
+                        new MockMultipartFile("files", "first.png", "image/png", createPng()),
+                        new MockMultipartFile("files", "second.png", "image/png", createPng()))));
+
+        for (TransactionSynchronization synchronization
+                : TransactionSynchronizationManager.getSynchronizations()) {
+            synchronization.afterCompletion(TransactionSynchronization.STATUS_ROLLED_BACK);
+        }
+        Path chapterDirectory = uploadDirectory.resolve("chapters").resolve("12").resolve("21");
+        try (var files = Files.list(chapterDirectory)) {
+            org.junit.jupiter.api.Assertions.assertFalse(files.findAny().isPresent());
+        }
+    }
+
     private void setOwnerStubs() {
         when(chapterRepository.findWithDetailsById(21L)).thenReturn(Optional.of(chapter));
         when(userRepository.findByUsername("author")).thenReturn(Optional.of(author));
@@ -204,6 +256,13 @@ class ChapterRevisionServiceTest {
         page.setPageNumber(number);
         page.setImageUrl(path);
         return page;
+    }
+
+    private byte[] createPng() throws Exception {
+        BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", output);
+        return output.toByteArray();
     }
 
     private User user(Long id, String username) {

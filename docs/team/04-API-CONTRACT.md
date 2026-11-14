@@ -39,8 +39,10 @@ Schema hiện có đã đủ cột/unique constraint cho digest; không cần mi
 | GET | `/api/users/{id}` | IMPLEMENTED — chính chủ hoặc ADMIN |
 | PUT | `/api/users/{id}` | IMPLEMENTED — chính chủ hoặc ADMIN; DTO không có role/status/password |
 | DELETE | `/api/users/{id}` | IMPLEMENTED — chỉ ADMIN |
+| GET | `/api/users/me` | IMPLEMENTED — xem hồ sơ của tài khoản đang đăng nhập |
+| PUT | `/api/users/me` | IMPLEMENTED — cập nhật hồ sơ của chính tài khoản đang đăng nhập; DTO không cho đổi role/status/password |
 
-Profile `/me`, role assignment, đổi trạng thái account và admin-specific user routes chưa có mapping HTTP; không xem User CRUD hiện có là API quản trị đầy đủ.
+Role assignment đã có qua API quản trị. Đổi trạng thái account và các route quản trị user riêng chưa có mapping HTTP; không xem User CRUD hiện có là API quản trị đầy đủ.
 
 ## 5. Comic và Category
 | Method | Endpoint | Mục đích |
@@ -67,7 +69,7 @@ Profile `/me`, role assignment, đổi trạng thái account và admin-specific 
 
 Tìm kiếm nhận `keyword` (tối đa 100 ký tự), `categoryId`, `publicationStatus` (`ONGOING`, `COMPLETED`, `HIATUS`), `page` (bắt đầu từ 0) và `size` (1–100, mặc định 20). Response gồm `content`, `page`, `size`, `totalElements`, `totalPages`. Xóa category đang được gắn trả `409`; category IDs lặp khi gắn vào Comic bị từ chối.
 
-Revision của truyện đã công khai lưu trong bảng `comic_revisions`. Khi cập nhật database đã có, chạy lần lượt migration chưa áp dụng: `database/migration/001_Create_Comic_Revisions.sql`, `database/migration/002_Allow_Moderation_Publish_Action.sql`, `database/migration/003_Create_Chapter_Revisions.sql`, `database/migration/004_allow_comment_moderation_status`, `database/migration/005_report_moderation_workflow.sql`. Không chạy lại `Create_Tables.sql` trên database có dữ liệu vì script đó xóa và tạo lại toàn bộ schema.
+Revision của truyện đã công khai lưu trong bảng `comic_revisions`. Khi cập nhật database đã có, chạy lần lượt migration chưa áp dụng: `database/migration/001_Create_Comic_Revisions.sql`, `database/migration/002_Allow_Moderation_Publish_Action.sql`, `database/migration/003_Create_Chapter_Revisions.sql`, `database/migration/004_allow_comment_moderation_status`, `database/migration/005_report_moderation_workflow.sql`, `database/migration/006_follow_and_in_app_notifications.sql`. Migration 006 chuyển follow sang hỗ trợ COMIC/CREATOR và tạo bảng notification; follow hiện có được giữ lại dưới loại COMIC. Giới hạn review 300 ký tự được khai báo trong schema mới và validation API. Không chạy lại `Create_Tables.sql` trên database có dữ liệu vì script đó xóa và tạo lại toàn bộ schema.
 
 ## 6. Chapter và pages
 | Method | Endpoint | Mục đích |
@@ -114,17 +116,27 @@ Upload chỉ nhận JPEG/PNG/WebP; giới hạn mỗi ảnh và tổng request t
 | GET | `/api/bookmarks` | Danh sách bookmark của user hiện tại |
 | POST | `/api/bookmarks` | Thêm bookmark (`{ "comicId": 123 }`) cho truyện đã PUBLISHED; trùng trả 409 |
 | DELETE | `/api/bookmarks/{id}` | Bỏ bookmark của user hiện tại; thành công trả 204 |
-| GET/POST | `/api/follows` | NOT IMPLEMENTED — controller/service còn khung |
-| DELETE | `/api/follows/{id}` | NOT IMPLEMENTED — controller/service còn khung |
+| GET | `/api/follows` | IMPLEMENTED — danh sách follow của user hiện tại, phân trang; lọc `targetType=COMIC/CREATOR` |
+| POST | `/api/follows` | IMPLEMENTED — theo dõi Comic đã public hoặc creator ACTIVE có role AUTHOR; body `{ "targetType": "COMIC", "targetId": 123, "notifyEnabled": true }`; `notifyEnabled` mặc định true, follow trùng trả 409 |
+| PATCH | `/api/follows/{followId}` | IMPLEMENTED — bật/tắt notification của follow thuộc user hiện tại; body `{ "notifyEnabled": false }` |
+| DELETE | `/api/follows/{followId}` | IMPLEMENTED — bỏ follow thuộc user hiện tại; thành công trả 204 |
+| GET | `/api/notifications` | IMPLEMENTED — notification của user hiện tại, phân trang; response có `content`, `page`, `size`, `totalElements`, `totalPages`, `unreadCount` |
+| GET | `/api/notifications/unread-count` | IMPLEMENTED — số notification chưa đọc của user hiện tại |
+| PATCH | `/api/notifications/{notificationId}/read` | IMPLEMENTED — đánh dấu một notification thuộc user hiện tại đã đọc |
+| PATCH | `/api/notifications/read-all` | IMPLEMENTED — đánh dấu mọi notification của user hiện tại đã đọc; trả 204 |
 | GET | `/api/reading-history` | IMPLEMENTED — USER/AUTHOR xem tiến độ đọc của mình; chỉ hiện comic/chapter còn public |
 | PUT | `/api/reading-history/progress` | IMPLEMENTED — USER/AUTHOR ghi/cập nhật tiến độ; chỉ chapter PUBLISHED của comic PUBLISHED và số trang tồn tại |
 | DELETE | `/api/reading-history/{id}` | IMPLEMENTED — USER/AUTHOR chỉ xóa lịch sử của mình; thành công trả 204 |
-| PUT | `/api/comics/{comicId}/rating` | Đang triển khai cục bộ; chưa xác minh và chưa đưa vào commit hiện tại |
-| GET | `/api/comics/{comicId}/rating` | Đang triển khai cục bộ; chưa xác minh và chưa đưa vào commit hiện tại |
+| PUT | `/api/comics/{comicId}/rating` | IMPLEMENTED — USER/AUTHOR chấm điểm 1–5 hoặc cập nhật đánh giá của mình; mỗi user một rating/Comic; tác giả không tự chấm Comic của mình |
+| GET | `/api/comics/{comicId}/rating` | IMPLEMENTED — điểm trung bình/lượt đánh giá của Comic và rating hiện tại của user nếu có |
 
 Không cho client thao tác dữ liệu cá nhân của user khác.
 
 `PUT /api/reading-history/progress` nhận `{ "chapterId": 123, "lastPageNumber": 5 }`. Schema có một hàng cho mỗi cặp `(user_id, comic_id)`, do đó mỗi lần cập nhật sẽ thay thế tiến độ mới nhất của truyện đó. Response chứa thông tin comic/chapter, trang gần nhất, tổng số trang và thời điểm đọc. Guest và role khác USER/AUTHOR không được dùng các endpoint history.
+
+Rating nhận `{ "score": 1, "review": "..." }`; `review` không bắt buộc và tối đa 300 ký tự. Trung bình/lượt đánh giá trên Comic được đồng bộ lại từ ratings trong cùng transaction. Khi chapter chuyển từ APPROVED sang PUBLISHED, backend tạo notification NEW_CHAPTER trong ứng dụng cho người theo dõi Comic hoặc creator; người theo dõi cả hai chỉ nhận một notification, và tác giả không tự nhận notification của mình.
+
+Frontend chưa được thay đổi trong phần này. Khi tích hợp, UI cần nối API follow cho cả Comic/creator, hiển thị và cập nhật `notifyEnabled`, cùng danh sách notification có phân trang, unread count, đánh dấu một notification và đánh dấu tất cả đã đọc.
 
 ## 8. Report/Admin
 | Method | Endpoint | Mục đích |
@@ -140,6 +152,8 @@ Không cho client thao tác dữ liệu cá nhân của user khác.
 | GET | `/api/admin/users` | NOT IMPLEMENTED — User CRUD hiện ở `/api/users` |
 | PATCH | `/api/admin/users/{id}` | NOT IMPLEMENTED |
 | GET/POST/PATCH/DELETE | `/api/admin/categories` | NOT IMPLEMENTED — Category CRUD hiện ở `/api/categories`, ADMIN-only |
+
+Report có trạng thái mặc định OPEN. Không cho kết luận trực tiếp từ OPEN hoặc sửa report đã RESOLVED/REJECTED. Migration `005_report_moderation_workflow.sql` chuyển dữ liệu DISMISSED cũ sang REJECTED trước khi áp dụng constraint mới.
 
 ## 9. Pagination và lỗi
 Pagination đề xuất: `page`, `size`, `sort`; chốt page index (0 hay 1). Response phân trang có thể dùng `content`, `page`, `size`, `totalElements`, `totalPages` nếu khớp code.

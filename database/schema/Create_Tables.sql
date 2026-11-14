@@ -9,9 +9,18 @@
 USE comichub;
 GO
 
+SET ANSI_NULLS ON;
+SET ANSI_PADDING ON;
+SET ANSI_WARNINGS ON;
+SET ARITHABORT ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET QUOTED_IDENTIFIER ON;
+GO
+
 /* ---------------------------------------------------------------------
    0. Xóa bảng cũ (theo thứ tự ngược của khóa ngoại)
    --------------------------------------------------------------------- */
+DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS moderation_logs;
 DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS reading_history;
@@ -302,7 +311,7 @@ CREATE TABLE ratings (
     user_id     BIGINT        NOT NULL,
     comic_id    BIGINT        NOT NULL,
     score       TINYINT       NOT NULL,
-    review      NVARCHAR(500) NULL,
+    review      NVARCHAR(300) NULL,
     created_at  DATETIME2     NOT NULL CONSTRAINT DF_ratings_created_at DEFAULT SYSDATETIME(),
     updated_at  DATETIME2     NOT NULL CONSTRAINT DF_ratings_updated_at DEFAULT SYSDATETIME(),
     CONSTRAINT PK_ratings            PRIMARY KEY (id),
@@ -328,14 +337,47 @@ GO
 CREATE TABLE follows (
     id              BIGINT    IDENTITY(1,1) NOT NULL,
     user_id         BIGINT    NOT NULL,
-    comic_id        BIGINT    NOT NULL,
+    target_type     VARCHAR(20) NOT NULL,
+    comic_id        BIGINT    NULL,
+    creator_id      BIGINT    NULL,
     notify_enabled  BIT       NOT NULL CONSTRAINT DF_follows_notify DEFAULT 1,
     created_at      DATETIME2 NOT NULL CONSTRAINT DF_follows_created_at DEFAULT SYSDATETIME(),
     CONSTRAINT PK_follows            PRIMARY KEY (id),
-    CONSTRAINT UQ_follows_user_comic UNIQUE (user_id, comic_id),
     CONSTRAINT FK_follows_user       FOREIGN KEY (user_id)  REFERENCES users(id)  ON DELETE CASCADE,
-    CONSTRAINT FK_follows_comic      FOREIGN KEY (comic_id) REFERENCES comics(id) ON DELETE CASCADE
+    CONSTRAINT FK_follows_comic      FOREIGN KEY (comic_id) REFERENCES comics(id) ON DELETE CASCADE,
+    CONSTRAINT FK_follows_creator    FOREIGN KEY (creator_id) REFERENCES users(id),
+    CONSTRAINT CK_follows_target CHECK (
+        (target_type = 'COMIC' AND comic_id IS NOT NULL AND creator_id IS NULL)
+        OR (target_type = 'CREATOR' AND comic_id IS NULL AND creator_id IS NOT NULL)
+    )
 );
+GO
+
+CREATE UNIQUE INDEX UX_follows_user_comic
+    ON follows (user_id, comic_id) WHERE target_type = 'COMIC';
+GO
+
+CREATE UNIQUE INDEX UX_follows_user_creator
+    ON follows (user_id, creator_id) WHERE target_type = 'CREATOR';
+GO
+
+CREATE TABLE notifications (
+    id          BIGINT       IDENTITY(1,1) NOT NULL,
+    user_id     BIGINT       NOT NULL,
+    chapter_id  BIGINT       NOT NULL,
+    type        VARCHAR(30)  NOT NULL CONSTRAINT DF_notifications_type DEFAULT 'NEW_CHAPTER',
+    created_at  DATETIME2    NOT NULL CONSTRAINT DF_notifications_created_at DEFAULT SYSDATETIME(),
+    read_at     DATETIME2    NULL,
+    CONSTRAINT PK_notifications PRIMARY KEY (id),
+    CONSTRAINT UQ_notifications_user_chapter UNIQUE (user_id, chapter_id),
+    CONSTRAINT FK_notifications_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT FK_notifications_chapter FOREIGN KEY (chapter_id) REFERENCES chapters(id) ON DELETE CASCADE,
+    CONSTRAINT CK_notifications_type CHECK (type IN ('NEW_CHAPTER'))
+);
+GO
+
+CREATE INDEX IX_notifications_user_read_created
+    ON notifications (user_id, read_at, created_at DESC);
 GO
 
 CREATE TABLE reading_history (
@@ -421,6 +463,7 @@ CREATE INDEX IX_ratings_comic_id ON ratings (comic_id);
 -- Bookmark / follow / lịch sử: xem danh sách của một user
 CREATE INDEX IX_bookmarks_user_id       ON bookmarks (user_id, created_at DESC);
 CREATE INDEX IX_follows_comic_id        ON follows (comic_id);
+CREATE INDEX IX_follows_creator_id      ON follows (creator_id);
 CREATE INDEX IX_reading_history_user_at ON reading_history (user_id, read_at DESC);
 
 -- Token: dọn token hết hạn, tìm token theo user

@@ -7,6 +7,7 @@ import com.comichub.entity.UserRole;
 import com.comichub.exception.ResourceNotFoundException;
 import com.comichub.exception.DuplicateResourceException;
 import com.comichub.mapper.UserMapper;
+import com.comichub.repository.FollowRepository;
 import com.comichub.repository.RoleRepository;
 import com.comichub.repository.UserRepository;
 import com.comichub.repository.UserRoleRepository;
@@ -46,6 +47,8 @@ class UserServiceTest {
     private RoleRepository roleRepository;
     @Mock
     private UserRoleRepository userRoleRepository;
+    @Mock
+    private FollowRepository followRepository;
 
     @InjectMocks
     private UserService userService;
@@ -127,6 +130,41 @@ class UserServiceTest {
         assertThrows(DuplicateResourceException.class,
                 () -> userService.deleteUser(1L));
         verify(userRepository, never()).delete(admin);
+    }
+
+    @Test
+    void deletingCreatorRemovesCreatorFollowsBeforeDeletingTheAccount() {
+        User creator = user(2L, "creator");
+        setAuthentication("admin", "ADMIN");
+        when(userRepository.findById(2L)).thenReturn(Optional.of(creator));
+
+        userService.deleteUser(2L);
+
+        verify(followRepository).deleteByCreator_Id(2L);
+        verify(userRepository).delete(creator);
+    }
+
+    @Test
+    void currentUserCanReadAndUpdateTheirOwnProfile() {
+        User reader = user(2L, "reader");
+        setAuthentication("reader", "USER");
+        when(userRepository.findByUsername("reader")).thenReturn(Optional.of(reader));
+        when(userRepository.existsByUsernameAndIdNot("reader-new", 2L)).thenReturn(false);
+        when(userRepository.existsByEmailAndIdNot("reader-new@example.test", 2L))
+                .thenReturn(false);
+        when(userRepository.save(reader)).thenReturn(reader);
+
+        userService.getCurrentUserProfile();
+        userService.updateCurrentUserProfile(new com.comichub.dto.user.UserUpdateRequest(
+                "reader-new", "reader-new@example.test", "Reader", null, null));
+
+        verify(userMapper, org.mockito.Mockito.times(2)).toResponse(reader);
+        verify(userRepository).save(reader);
+    }
+
+    @Test
+    void currentUserProfileRequiresAnAuthenticatedPrincipal() {
+        assertThrows(AccessDeniedException.class, userService::getCurrentUserProfile);
     }
 
     private User user(Long id, String username) {

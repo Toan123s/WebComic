@@ -46,6 +46,7 @@ public class ChapterService {
     private final UserRepository userRepository;
     private final ModerationLogRepository moderationLogRepository;
     private final FileStorageService fileStorageService;
+    private final NotificationService notificationService;
 
     public ChapterService(
             ChapterRepository chapterRepository,
@@ -53,13 +54,15 @@ public class ChapterService {
             ComicRepository comicRepository,
             UserRepository userRepository,
             ModerationLogRepository moderationLogRepository,
-            FileStorageService fileStorageService) {
+            FileStorageService fileStorageService,
+            NotificationService notificationService) {
         this.chapterRepository = chapterRepository;
         this.chapterPageRepository = chapterPageRepository;
         this.comicRepository = comicRepository;
         this.userRepository = userRepository;
         this.moderationLogRepository = moderationLogRepository;
         this.fileStorageService = fileStorageService;
+        this.notificationService = notificationService;
     }
 
     public List<ChapterResponse> getChapters(Long comicId) {
@@ -215,6 +218,7 @@ public class ChapterService {
         chapter.setPublishedAt(now);
         Chapter savedChapter = chapterRepository.save(chapter);
         recordModeration(savedChapter, getCurrentUser(), "PUBLISH", null, now);
+        notificationService.createForPublishedChapter(savedChapter);
         return toResponse(savedChapter);
     }
 

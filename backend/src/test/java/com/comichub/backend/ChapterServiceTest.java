@@ -2,6 +2,7 @@ package com.comichub.backend;
 
 import com.comichub.dto.chapter.ChapterCreateRequest;
 import com.comichub.entity.Chapter;
+import com.comichub.entity.ChapterPage;
 import com.comichub.entity.Comic;
 import com.comichub.entity.User;
 import com.comichub.exception.DuplicateResourceException;
@@ -12,9 +13,12 @@ import com.comichub.repository.ModerationLogRepository;
 import com.comichub.repository.UserRepository;
 import com.comichub.service.ChapterService;
 import com.comichub.service.FileStorageService;
+import com.comichub.service.NotificationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -23,12 +27,15 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -51,6 +58,8 @@ class ChapterServiceTest {
     private ModerationLogRepository moderationLogRepository;
     @Mock
     private FileStorageService fileStorageService;
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private ChapterService chapterService;
@@ -74,6 +83,9 @@ class ChapterServiceTest {
     @AfterEach
     void clearSecurityContext() {
         SecurityContextHolder.clearContext();
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
     }
 
     @Test
@@ -108,6 +120,19 @@ class ChapterServiceTest {
     }
 
     @Test
+    void duplicateChapterNumberIsRejected() {
+        when(comicRepository.findWithAuthorById(12L)).thenReturn(Optional.of(comic));
+        when(userRepository.findByUsername("author")).thenReturn(Optional.of(author));
+        when(chapterRepository.existsByComic_IdAndChapterNumber(
+                12L, new BigDecimal("1.0"))).thenReturn(true);
+
+        assertThrows(DuplicateResourceException.class,
+                () -> chapterService.createChapter(
+                        12L, new ChapterCreateRequest(new BigDecimal("1.0"), "Duplicate")));
+        verify(chapterRepository, never()).save(any(Chapter.class));
+    }
+
+    @Test
     void submitForReviewRequiresAtLeastOnePage() {
         Chapter chapter = chapter("DRAFT");
         when(chapterRepository.findWithDetailsById(21L)).thenReturn(Optional.of(chapter));
@@ -116,6 +141,19 @@ class ChapterServiceTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> chapterService.submitForReview(21L));
+        verify(chapterRepository, never()).save(any(Chapter.class));
+    }
+
+    @Test
+    void submitForReviewRequiresPublishedComic() {
+        comic.setModerationStatus("DRAFT");
+        Chapter chapter = chapter("DRAFT");
+        when(chapterRepository.findWithDetailsById(21L)).thenReturn(Optional.of(chapter));
+        when(userRepository.findByUsername("author")).thenReturn(Optional.of(author));
+
+        assertThrows(DuplicateResourceException.class,
+                () -> chapterService.submitForReview(21L));
+        verify(chapterPageRepository, never()).countByChapter_Id(21L);
         verify(chapterRepository, never()).save(any(Chapter.class));
     }
 
@@ -148,6 +186,7 @@ class ChapterServiceTest {
 
         assertEquals("PUBLISHED", result.status());
         verify(moderationLogRepository, times(2)).save(any());
+        verify(notificationService).createForPublishedChapter(any(Chapter.class));
     }
 
     @Test
@@ -157,6 +196,56 @@ class ChapterServiceTest {
         assertThrows(AccessDeniedException.class,
                 () -> chapterService.publishChapter(21L));
         verify(chapterRepository, never()).save(any(Chapter.class));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"DRAFT", "REJECTED"})
+    void deletingEditableChapterRemovesPageFilesOnlyAfterCommit(String status) {
+        Chapter chapter = chapter(status);
+        ChapterPage page = new ChapterPage();
+        page.setChapter(chapter);
+        page.setImageUrl("chapters/12/21/page.png");
+        when(chapterRepository.findWithDetailsById(21L)).thenReturn(Optional.of(chapter));
+        when(userRepository.findByUsername("author")).thenReturn(Optional.of(author));
+        when(chapterPageRepository.findByChapter_IdOrderByPageNumberAsc(21L))
+                .thenReturn(List.of(page));
+        TransactionSynchronizationManager.initSynchronization();
+
+        chapterService.deleteChapter(21L);
+
+        verify(chapterRepository).delete(chapter);
+        verify(fileStorageService, never()).delete(page.getImageUrl());
+        for (TransactionSynchronization synchronization
+                : TransactionSynchronizationManager.getSynchronizations()) {
+            synchronization.afterCompletion(TransactionSynchronization.STATUS_COMMITTED);
+        }
+        verify(fileStorageService).delete(page.getImageUrl());
+    }
+
+    @Test
+    void deletingPublishedChapterSoftDeletesWithoutRemovingFiles() {
+        Chapter chapter = chapter("PUBLISHED");
+        when(chapterRepository.findWithDetailsById(21L)).thenReturn(Optional.of(chapter));
+        when(userRepository.findByUsername("author")).thenReturn(Optional.of(author));
+        when(chapterRepository.save(chapter)).thenReturn(chapter);
+
+        chapterService.deleteChapter(21L);
+
+        assertTrue(chapter.getIsDeleted());
+        verify(chapterRepository).save(chapter);
+        verify(chapterRepository, never()).delete(any(Chapter.class));
+        verify(fileStorageService, never()).delete(any());
+    }
+
+    @Test
+    void cannotDeletePendingChapter() {
+        Chapter chapter = chapter("PENDING");
+        when(chapterRepository.findWithDetailsById(21L)).thenReturn(Optional.of(chapter));
+        when(userRepository.findByUsername("author")).thenReturn(Optional.of(author));
+
+        assertThrows(DuplicateResourceException.class,
+                () -> chapterService.deleteChapter(21L));
+        verify(chapterRepository, never()).delete(any(Chapter.class));
     }
 
     @Test

@@ -54,10 +54,12 @@
 - Comment phải hợp lệ và theo policy đăng nhập.
 - User chỉ sửa/xóa comment của mình trừ quyền moderation.
 - Bookmark chỉ được tạo với truyện đã PUBLISHED; mỗi user chỉ bookmark một lần cho mỗi truyện và chỉ được xóa bookmark của mình.
-- Bookmark/follow không tạo liên kết trùng ngoài ý muốn.
+- Follow hỗ trợ Comic đã PUBLISHED và creator ACTIVE có role AUTHOR; mỗi user chỉ follow một lần cho cùng một đối tượng và không được tự follow creator.
+- Mỗi follow có tùy chọn bật/tắt notification, mặc định bật. Khi chapter được publish, follower Comic/creator nhận notification trong ứng dụng; follow cả hai nguồn chỉ tạo một notification, tác giả không tự nhận.
+- Notification chỉ được user sở hữu xem, phân trang, đếm unread và đánh dấu đã đọc từng cái hoặc tất cả.
 - Lịch sử đọc lưu tiến độ gần nhất cho mỗi cặp user/comic (không lưu từng lần đọc riêng). Chỉ `USER`/`AUTHOR` được ghi tiến độ cho trang tồn tại trong chapter và comic đã `PUBLISHED`; danh sách chỉ trả history của user hiện tại và nội dung vẫn còn public; chỉ chủ sở hữu được xóa.
-- Rating theo phạm vi điểm đã chốt và policy một user/comic.
-- **Cần chốt:** rating range, comment theo comic/chapter, điều kiện rating, xóa history và nội dung bị ẩn.
+- Rating dùng thang điểm 1–5, một rating cho mỗi user/Comic; PUT cập nhật rating hiện tại. Tác giả không tự đánh giá Comic của mình; review không bắt buộc và tối đa 300 ký tự.
+- **Cần chốt:** comment theo comic/chapter, điều kiện rating theo trạng thái Comic, xóa history và nội dung bị ẩn.
 
 ## 6.1 Authorization/RBAC
 - Chỉ dùng bốn role trong seed: `USER`, `AUTHOR`, `MODERATOR`, `ADMIN`; anonymous là GUEST, không có role DB.

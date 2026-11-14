@@ -1,10 +1,18 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: RatingResponse.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Thành phần backend RatingResponse.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Đối chiếu với API contract, schema và các thành phần liên quan trước khi triển khai.
- */
+package com.comichub.dto.rating;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+/**
+ * score/review/updatedAt là đánh giá của người dùng hiện tại (null nếu chưa chấm).
+ * ratingAvg/ratingCount là số liệu tổng hợp của toàn bộ truyện.
+ */
+public record RatingResponse(
+        Long comicId,
+        Integer score,
+        String review,
+        BigDecimal ratingAvg,
+        Integer ratingCount,
+        LocalDateTime updatedAt
+) {
+}

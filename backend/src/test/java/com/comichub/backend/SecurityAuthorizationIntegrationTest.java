@@ -6,10 +6,12 @@ import com.comichub.entity.User;
 import com.comichub.repository.ChapterRepository;
 import com.comichub.repository.ComicRepository;
 import com.comichub.repository.UserRepository;
+import com.comichub.repository.UserRoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -21,7 +23,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,6 +37,8 @@ class SecurityAuthorizationIntegrationTest {
     private WebApplicationContext applicationContext;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserRoleRepository userRoleRepository;
     @Autowired
     private ComicRepository comicRepository;
     @Autowired
@@ -81,6 +87,143 @@ class SecurityAuthorizationIntegrationTest {
     void adminCanReadUserAdministration() throws Exception {
         mockMvc.perform(get("/api/users").with(user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @Transactional
+    void userCanReadAndUpdateOnlyTheirOwnProfile() throws Exception {
+        User profileUser = saveUser("profile-owner");
+        mockMvc.perform(get("/api/users/me")
+                        .with(user(profileUser.getUsername()).roles("USER")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(profileUser.getUsername()))
+                .andExpect(jsonPath("$.passwordHash").doesNotExist())
+                .andExpect(jsonPath("$.refreshToken").doesNotExist());
+
+        mockMvc.perform(put("/api/users/me")
+                        .with(user(profileUser.getUsername()).roles("USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "profile-updated",
+                                  "email": "profile-updated@example.test",
+                                  "displayName": "Updated profile",
+                                  "bio": "Profile bio",
+                                  "status": "BANNED",
+                                  "roles": ["ADMIN"]
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("profile-updated"))
+                .andExpect(jsonPath("$.displayName").value("Updated profile"))
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.roles").doesNotExist())
+                .andExpect(jsonPath("$.passwordHash").doesNotExist());
+
+        mockMvc.perform(get("/api/users/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Transactional
+    void userCannotUpdateAnotherUsersProfileThroughIdRoute() throws Exception {
+        User owner = saveUser("profile-owner");
+        User other = saveUser("profile-other");
+
+        mockMvc.perform(put("/api/users/{id}", owner.getId())
+                        .with(user(other.getUsername()).roles("USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "hacked-profile",
+                                  "email": "hacked-profile@example.test"
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Transactional
+    void profileUpdateRejectsInvalidFields() throws Exception {
+        User profileUser = saveUser("profile-validation");
+        mockMvc.perform(put("/api/users/me")
+                        .with(user(profileUser.getUsername()).roles("USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "x",
+                                  "email": "not-an-email"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Transactional
+    void publicRegistrationCreatesOnlyUserRoleAndDoesNotExposeSecrets() throws Exception {
+        String username = "registration-" + UUID.randomUUID().toString().substring(0, 10);
+        String email = username + "@example.test";
+        String request = """
+                {
+                  "username": "%s",
+                  "email": "%s",
+                  "password": "valid-password",
+                  "roles": ["ADMIN"],
+                  "status": "BANNED"
+                }
+                """.formatted(username, email);
+
+        String response = mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.username").value(username))
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.passwordHash").doesNotExist())
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.roles").doesNotExist())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        long userId = new com.fasterxml.jackson.databind.ObjectMapper()
+                .readTree(response).path("id").asLong();
+
+        org.junit.jupiter.api.Assertions.assertEquals(
+                java.util.List.of("USER"),
+                userRoleRepository.findRoleNamesByUserId(userId));
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isConflict());
+
+        String duplicateEmail = """
+                {
+                  "username": "%s",
+                  "email": "%s",
+                  "password": "valid-password"
+                }
+                """.formatted(
+                "email-duplicate-" + UUID.randomUUID().toString().substring(0, 10),
+                email);
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(duplicateEmail))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void publicRegistrationRejectsInvalidRequiredFields() throws Exception {
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "x",
+                                  "email": "not-an-email",
+                                  "password": "short"
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

@@ -21,6 +21,7 @@ import com.comichub.entity.UserRole;
 import com.comichub.exception.DuplicateResourceException;
 import com.comichub.exception.ResourceNotFoundException;
 import com.comichub.mapper.UserMapper;
+import com.comichub.repository.FollowRepository;
 import com.comichub.repository.RoleRepository;
 import com.comichub.repository.UserRepository;
 import com.comichub.repository.UserRoleRepository;
@@ -43,19 +44,22 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
+    private final FollowRepository followRepository;
 
     public UserService(
             UserRepository userRepository,
             UserMapper userMapper,
             PasswordEncoder passwordEncoder,
             RoleRepository roleRepository,
-            UserRoleRepository userRoleRepository) {
+            UserRoleRepository userRoleRepository,
+            FollowRepository followRepository) {
 
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userRoleRepository = userRoleRepository;
+        this.followRepository = followRepository;
     }
 
     // READ: Lấy danh sách người dùng
@@ -75,6 +79,10 @@ public class UserService {
         requireSelfOrAdmin(user);
 
         return userMapper.toResponse(user);
+    }
+
+    public UserResponse getCurrentUserProfile() {
+        return userMapper.toResponse(getCurrentUser());
     }
 
     // CREATE: Tạo người dùng
@@ -128,6 +136,17 @@ public class UserService {
         User user = findUserById(id);
         requireSelfOrAdmin(user);
 
+        return updateProfile(user, id, request);
+    }
+
+    @Transactional
+    public UserResponse updateCurrentUserProfile(UserUpdateRequest request) {
+        User user = getCurrentUser();
+        return updateProfile(user, user.getId(), request);
+    }
+
+    private UserResponse updateProfile(
+            User user, Long id, UserUpdateRequest request) {
         if (userRepository.existsByUsernameAndIdNot(
                 request.username(), id)) {
 
@@ -179,6 +198,7 @@ public class UserService {
                     "Không thể xóa tài khoản ADMIN cuối cùng đang hoạt động");
         }
 
+        followRepository.deleteByCreator_Id(id);
         userRepository.delete(user);
     }
 
@@ -197,6 +217,16 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Không tìm thấy người dùng có ID: " + id
                 ));
+    }
+
+    private User getCurrentUser() {
+        Authentication authentication = currentAuthentication();
+        if (!isAuthenticated(authentication)) {
+            throw new AccessDeniedException("Bạn chưa đăng nhập");
+        }
+        return userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy tài khoản hiện tại"));
     }
 
     private void requireSelfOrAdmin(User user) {
