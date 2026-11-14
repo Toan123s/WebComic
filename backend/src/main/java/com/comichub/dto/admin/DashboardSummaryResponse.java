@@ -1,10 +1,12 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: DashboardSummaryResponse.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Thành phần backend DashboardSummaryResponse.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Đối chiếu với API contract, schema và các thành phần liên quan trước khi triển khai.
- */
+package com.comichub.dto.admin;
 
+public record DashboardSummaryResponse(
+        long pendingComics,
+        long pendingComicRevisions,
+        long pendingChapters,
+        long pendingChapterRevisions,
+        long pendingComments,
+        long openReports,
+        long inProgressReports
+) {
+}

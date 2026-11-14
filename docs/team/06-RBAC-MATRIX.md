@@ -73,6 +73,18 @@ HTTP status: anonymous tới API riêng tư `401`; authenticated nhưng thiếu 
 | GET | `/api/reading-history` | Authenticated `USER` hoặc `AUTHOR` | Chỉ tiến độ user hiện tại; không trả nội dung đã ẩn/unpublished | `ReadingHistoryServiceTest` |
 | PUT | `/api/reading-history/progress` | Authenticated `USER` hoặc `AUTHOR` | Upsert tiến độ theo user/comic; chapter phải public và trang phải tồn tại | `ReadingHistoryServiceTest` |
 | DELETE | `/api/reading-history/{id}` | Authenticated `USER` hoặc `AUTHOR` | Chỉ xóa lịch sử thuộc user hiện tại | `ReadingHistoryServiceTest` |
+| GET | `/api/comics/{comicId}/comments` | Public; người viết/`MODERATOR`/`ADMIN` thấy thêm trạng thái riêng | Public chỉ thấy VISIBLE; người viết chỉ thấy comment của mình; moderator thấy hàng đợi theo trạng thái | `CommentServiceTest` |
+| POST | `/api/comics/{comicId}/comments` | `USER` hoặc `AUTHOR` | Chỉ comment lên comic/chapter public; comment mới PENDING; reply phải trỏ comment VISIBLE cùng vị trí | `CommentServiceTest` |
+| PATCH | `/api/comments/{commentId}` | `USER` hoặc `AUTHOR`, owner | Comment VISIBLE/REJECTED sửa xong quay lại PENDING; HIDDEN/DELETED không sửa được | `CommentServiceTest` |
+| DELETE | `/api/comments/{commentId}` | `USER` hoặc `AUTHOR`, owner | Chuyển status sang DELETED, không xóa cứng | `CommentServiceTest` |
+| GET | `/api/moderation/comments/pending` | `MODERATOR` hoặc `ADMIN` | Chỉ comment PENDING; service cũng kiểm tra role | `CommentServiceTest` |
+| POST | `/api/moderation/comments/{commentId}/approve` | `MODERATOR` hoặc `ADMIN` | PENDING → VISIBLE; không tự duyệt comment của mình | `CommentServiceTest` |
+| POST | `/api/moderation/comments/{commentId}/reject` | `MODERATOR` hoặc `ADMIN` | PENDING → REJECTED; lý do bắt buộc; không tự từ chối comment của mình | `CommentServiceTest` |
+| POST | `/api/moderation/comments/{commentId}/hide` | `MODERATOR` hoặc `ADMIN` | VISIBLE → HIDDEN; lý do bắt buộc; không tự ẩn comment của mình | `CommentServiceTest` |
+| POST | `/api/reports` | `USER` hoặc `AUTHOR` | Chỉ nhận report cho Comic/chapter/comment đang public; status ban đầu OPEN | `ReportServiceTest` |
+| GET | `/api/admin/reports` | `MODERATOR` hoặc `ADMIN` | Lọc status/targetType, page index 0, size 1–100 | `ReportServiceTest` |
+| PATCH | `/api/admin/reports/{reportId}` | `MODERATOR` hoặc `ADMIN` | OPEN → IN_PROGRESS → RESOLVED/REJECTED; cần resolutionNote khi kết luận; không tự xử lý report của mình | `ReportServiceTest` |
+| GET | `/api/admin/dashboard` | `ADMIN` | Đếm các hàng đợi moderation Comic/chapter/revision/comment/report | `AdminDashboardServiceTest` |
 
 `MODERATOR` không được mặc định có quyền `ADMIN`. `ADMIN` được phép thực hiện moderation nhưng không được tự kiểm duyệt nội dung của chính mình. Với các API xóa/đọc riêng tư, service giữ quy tắc ownership kể cả khi được gọi không qua Controller. Moderation logs hỗ trợ `APPROVE`, `REJECT`, `PUBLISH`; cần chạy migration `002_Allow_Moderation_Publish_Action.sql` trên database đã tạo trước đó.
 
@@ -80,11 +92,12 @@ HTTP status: anonymous tới API riêng tư `401`; authenticated nhưng thiếu 
 
 Các controller/service tương ứng hiện là file khung, không có method mapping; không bổ sung route trong công việc RBAC này:
 
-- Follow, comment, rating và report.
-- Admin dashboard và report queue.
+- Follow; rating đang có thay đổi cục bộ nhưng chưa xác minh.
 - API profile `/me`, upload tổng quát và các route quản trị khác trong API contract cũ.
 
 Đăng ký chỉ gán role `USER`; ADMIN dùng `/api/admin/users/{userId}/roles` để thay toàn bộ role, với các bảo vệ chống gỡ/xóa ADMIN cuối cùng đang hoạt động.
+
+Report có trạng thái `OPEN → IN_PROGRESS → RESOLVED/REJECTED`; migration `005_report_moderation_workflow.sql` chuyển giá trị `DISMISSED` cũ sang `REJECTED`. Comment dùng trạng thái `PENDING`, `VISIBLE`, `REJECTED`, `HIDDEN`, `DELETED`.
 
 ## Bằng chứng kiểm thử
 

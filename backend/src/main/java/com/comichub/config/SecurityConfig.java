@@ -114,6 +114,7 @@ public class SecurityConfig {
                                 "/api/comics/search",
                                 "/api/comics/*",
                                 "/api/comics/*/chapters",
+                                "/api/comics/*/comments",
                                 "/api/comics/*/categories",
                                 "/api/chapters/*",
                                 "/api/chapters/*/pages",

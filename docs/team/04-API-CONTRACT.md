@@ -67,7 +67,7 @@ Profile `/me`, role assignment, đổi trạng thái account và admin-specific 
 
 Tìm kiếm nhận `keyword` (tối đa 100 ký tự), `categoryId`, `publicationStatus` (`ONGOING`, `COMPLETED`, `HIATUS`), `page` (bắt đầu từ 0) và `size` (1–100, mặc định 20). Response gồm `content`, `page`, `size`, `totalElements`, `totalPages`. Xóa category đang được gắn trả `409`; category IDs lặp khi gắn vào Comic bị từ chối.
 
-Revision của truyện đã công khai lưu trong bảng `comic_revisions`. Khi cập nhật database đã có, chạy lần lượt migration chưa áp dụng: `database/migration/001_Create_Comic_Revisions.sql`, `database/migration/002_Allow_Moderation_Publish_Action.sql`, `database/migration/003_Create_Chapter_Revisions.sql`. Không chạy lại `Create_Tables.sql` trên database có dữ liệu vì script đó xóa và tạo lại toàn bộ schema.
+Revision của truyện đã công khai lưu trong bảng `comic_revisions`. Khi cập nhật database đã có, chạy lần lượt migration chưa áp dụng: `database/migration/001_Create_Comic_Revisions.sql`, `database/migration/002_Allow_Moderation_Publish_Action.sql`, `database/migration/003_Create_Chapter_Revisions.sql`, `database/migration/004_allow_comment_moderation_status`, `database/migration/005_report_moderation_workflow.sql`. Không chạy lại `Create_Tables.sql` trên database có dữ liệu vì script đó xóa và tạo lại toàn bộ schema.
 
 ## 6. Chapter và pages
 | Method | Endpoint | Mục đích |
@@ -101,11 +101,16 @@ Revision của truyện đã công khai lưu trong bảng `comic_revisions`. Khi
 Upload chỉ nhận JPEG/PNG/WebP; giới hạn mỗi ảnh và tổng request theo cấu hình multipart hiện tại (10 MB/ảnh, 50 MB/request mặc định). File lưu ở `app.upload.dir` với tên ngẫu nhiên do server tạo; DB lưu đường dẫn tương đối, response dùng API image endpoint. Chapter đã `PUBLISHED` được sửa thông qua chapter revision snapshot riêng; bản cũ vẫn public cho tới khi revision được duyệt. Bảng moderation logs ghi `APPROVE`, `REJECT`, `PUBLISH`; database cũ cần áp dụng migration `002` để cho phép action `PUBLISH`.
 
 ## 7. Comment, bookmark, follow, history, rating
-Các endpoint tương tác không được liệt kê là IMPLEMENTED bên dưới hiện chưa có controller mapping; các dòng NOT IMPLEMENTED là backlog contract, không phải route đang chạy.
 | Method | Endpoint | Mục đích |
 |---|---|---|
-| GET/POST | `/api/comics/{comicId}/comments` | NOT IMPLEMENTED — controller/service còn khung |
-| PATCH/DELETE | `/api/comments/{commentId}` | NOT IMPLEMENTED — controller/service còn khung |
+| GET | `/api/comics/{comicId}/comments` | IMPLEMENTED — public chỉ thấy comment VISIBLE; người viết thấy comment của mình chưa bị xóa; MODERATOR/ADMIN thấy toàn bộ trạng thái. `chapterId` lọc theo chapter |
+| POST | `/api/comics/{comicId}/comments` | IMPLEMENTED — USER/AUTHOR tạo comment PENDING; comment/reply chỉ trên comic/chapter đã public |
+| PATCH | `/api/comments/{commentId}` | IMPLEMENTED — USER/AUTHOR chỉ sửa comment của mình; sửa comment VISIBLE/REJECTED đưa lại về PENDING; comment HIDDEN/DELETED không sửa được |
+| DELETE | `/api/comments/{commentId}` | IMPLEMENTED — USER/AUTHOR chỉ xóa comment của mình bằng trạng thái DELETED |
+| GET | `/api/moderation/comments/pending` | IMPLEMENTED — MODERATOR/ADMIN xem hàng đợi comment PENDING |
+| POST | `/api/moderation/comments/{commentId}/approve` | IMPLEMENTED — MODERATOR/ADMIN chuyển PENDING thành VISIBLE; không tự duyệt comment của mình |
+| POST | `/api/moderation/comments/{commentId}/reject` | IMPLEMENTED — MODERATOR/ADMIN chuyển PENDING thành REJECTED, bắt buộc ghi lý do |
+| POST | `/api/moderation/comments/{commentId}/hide` | IMPLEMENTED — MODERATOR/ADMIN ẩn comment VISIBLE, bắt buộc ghi lý do |
 | GET | `/api/bookmarks` | Danh sách bookmark của user hiện tại |
 | POST | `/api/bookmarks` | Thêm bookmark (`{ "comicId": 123 }`) cho truyện đã PUBLISHED; trùng trả 409 |
 | DELETE | `/api/bookmarks/{id}` | Bỏ bookmark của user hiện tại; thành công trả 204 |
@@ -114,21 +119,20 @@ Các endpoint tương tác không được liệt kê là IMPLEMENTED bên dư�
 | GET | `/api/reading-history` | IMPLEMENTED — USER/AUTHOR xem tiến độ đọc của mình; chỉ hiện comic/chapter còn public |
 | PUT | `/api/reading-history/progress` | IMPLEMENTED — USER/AUTHOR ghi/cập nhật tiến độ; chỉ chapter PUBLISHED của comic PUBLISHED và số trang tồn tại |
 | DELETE | `/api/reading-history/{id}` | IMPLEMENTED — USER/AUTHOR chỉ xóa lịch sử của mình; thành công trả 204 |
-| PUT | `/api/comics/{comicId}/rating` | NOT IMPLEMENTED — controller/service còn khung |
-| GET | `/api/comics/{comicId}/rating` | NOT IMPLEMENTED — controller/service còn khung |
+| PUT | `/api/comics/{comicId}/rating` | Đang triển khai cục bộ; chưa xác minh và chưa đưa vào commit hiện tại |
+| GET | `/api/comics/{comicId}/rating` | Đang triển khai cục bộ; chưa xác minh và chưa đưa vào commit hiện tại |
 
 Không cho client thao tác dữ liệu cá nhân của user khác.
 
 `PUT /api/reading-history/progress` nhận `{ "chapterId": 123, "lastPageNumber": 5 }`. Schema có một hàng cho mỗi cặp `(user_id, comic_id)`, do đó mỗi lần cập nhật sẽ thay thế tiến độ mới nhất của truyện đó. Response chứa thông tin comic/chapter, trang gần nhất, tổng số trang và thời điểm đọc. Guest và role khác USER/AUTHOR không được dùng các endpoint history.
 
 ## 8. Report/Admin
-Các API quản trị dưới đây có trạng thái được ghi rõ; NOT IMPLEMENTED là backlog, không phải route đang chạy.
 | Method | Endpoint | Mục đích |
 |---|---|---|
-| POST | `/api/reports` | NOT IMPLEMENTED — controller/service còn khung |
-| GET | `/api/admin/reports` | NOT IMPLEMENTED — controller/service còn khung |
-| PATCH | `/api/admin/reports/{id}` | NOT IMPLEMENTED — controller/service còn khung |
-| GET | `/api/admin/dashboard` | NOT IMPLEMENTED — controller/service còn khung |
+| POST | `/api/reports` | IMPLEMENTED — USER/AUTHOR gửi report cho nội dung public; `targetType`: COMIC/CHAPTER/COMMENT; `reason`: SPAM/INAPPROPRIATE/COPYRIGHT/OTHER |
+| GET | `/api/admin/reports` | IMPLEMENTED — MODERATOR/ADMIN lọc theo status/targetType, phân trang |
+| PATCH | `/api/admin/reports/{id}` | IMPLEMENTED — MODERATOR/ADMIN chuyển OPEN → IN_PROGRESS → RESOLVED hoặc REJECTED; kết luận cần resolutionNote; người gửi không tự xử lý report |
+| GET | `/api/admin/dashboard` | IMPLEMENTED — chỉ ADMIN; trả số lượng pending Comic/revision/chapter/revision/comment và report OPEN/IN_PROGRESS |
 | GET | `/api/admin/roles` | ADMIN xem danh sách role được hỗ trợ |
 | GET | `/api/admin/users/{userId}/roles` | ADMIN xem role của một user |
 | PUT | `/api/admin/users/{userId}/roles` | ADMIN thay toàn bộ role; body `{ "roles": ["USER", "AUTHOR"] }`; không gỡ ADMIN cuối cùng đang hoạt động |

@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface ComicRevisionRepository extends JpaRepository<ComicRevision, Long> {
 
+    long countByStatus(String status);
+
     boolean existsByComic_IdAndStatus(Long comicId, String status);
 
     @EntityGraph(attributePaths = {"comic", "comic.author", "submittedBy"})

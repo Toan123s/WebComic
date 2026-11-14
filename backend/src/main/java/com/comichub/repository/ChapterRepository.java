@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface ChapterRepository extends JpaRepository<Chapter, Long> {
 
+    long countByStatusAndIsDeletedFalse(String status);
+
     @EntityGraph(attributePaths = {"comic", "comic.author", "reviewer"})
     Optional<Chapter> findWithDetailsById(Long id);
 

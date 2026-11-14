@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public interface ComicRepository extends JpaRepository<Comic, Long> {
 
+    long countByModerationStatusAndIsDeletedFalse(String moderationStatus);
+
     boolean existsBySlug(String slug);
 
     @EntityGraph(attributePaths = "author")

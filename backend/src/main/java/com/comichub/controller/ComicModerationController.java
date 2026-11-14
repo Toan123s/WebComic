@@ -5,9 +5,11 @@ import com.comichub.dto.comic.ComicRevisionResponse;
 import com.comichub.dto.comic.ModerationDecisionRequest;
 import com.comichub.dto.chapter.ChapterResponse;
 import com.comichub.dto.chapter.ChapterRevisionResponse;
+import com.comichub.dto.comment.CommentResponse;
 import com.comichub.service.ComicService;
 import com.comichub.service.ChapterService;
 import com.comichub.service.ChapterRevisionService;
+import com.comichub.service.CommentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,14 +30,17 @@ public class ComicModerationController {
     private final ComicService comicService;
     private final ChapterService chapterService;
     private final ChapterRevisionService chapterRevisionService;
+    private final CommentService commentService;
 
     public ComicModerationController(
             ComicService comicService,
             ChapterService chapterService,
-            ChapterRevisionService chapterRevisionService) {
+            ChapterRevisionService chapterRevisionService,
+            CommentService commentService) {
         this.comicService = comicService;
         this.chapterService = chapterService;
         this.chapterRevisionService = chapterRevisionService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/comics/pending")
@@ -110,5 +115,29 @@ public class ComicModerationController {
             @Valid @RequestBody(required = false) ModerationDecisionRequest request) {
         return ResponseEntity.ok(chapterRevisionService.reject(
                 revisionId, request == null ? null : request.note()));
+    }
+
+    @GetMapping("/comments/pending")
+    public ResponseEntity<List<CommentResponse>> getPendingComments() {
+        return ResponseEntity.ok(commentService.getPendingComments());
+    }
+
+    @PostMapping("/comments/{commentId}/approve")
+    public ResponseEntity<CommentResponse> approveComment(@PathVariable Long commentId) {
+        return ResponseEntity.ok(commentService.approveComment(commentId));
+    }
+
+    @PostMapping("/comments/{commentId}/reject")
+    public ResponseEntity<CommentResponse> rejectComment(
+            @PathVariable Long commentId,
+            @Valid @RequestBody ModerationDecisionRequest request) {
+        return ResponseEntity.ok(commentService.rejectComment(commentId, request.note()));
+    }
+
+    @PostMapping("/comments/{commentId}/hide")
+    public ResponseEntity<CommentResponse> hideComment(
+            @PathVariable Long commentId,
+            @Valid @RequestBody ModerationDecisionRequest request) {
+        return ResponseEntity.ok(commentService.hideComment(commentId, request.note()));
     }
 }

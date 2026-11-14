@@ -1,10 +1,27 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: AdminDashboardController.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Điểm tiếp nhận HTTP cho chức năng AdminDashboard.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Khi triển khai: chốt endpoint/request/response/status theo API contract; validate input, gọi Service và kiểm tra quyền ở backend.
- */
+package com.comichub.controller;
+
+import com.comichub.dto.admin.DashboardSummaryResponse;
+import com.comichub.service.AdminDashboardService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/admin/dashboard")
+@PreAuthorize("hasRole('ADMIN')")
+public class AdminDashboardController {
+
+    private final AdminDashboardService adminDashboardService;
+
+    public AdminDashboardController(AdminDashboardService adminDashboardService) {
+        this.adminDashboardService = adminDashboardService;
+    }
+
+    @GetMapping
+    public ResponseEntity<DashboardSummaryResponse> getSummary() {
+        return ResponseEntity.ok(adminDashboardService.getSummary());
+    }
+}
 

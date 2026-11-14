@@ -1,0 +1,42 @@
+USE comichub;
+GO
+
+/* =====================================================================
+   004 - Trạng thái kiểm duyệt cho comment
+   Luồng: gửi comment -> PENDING (chỉ người viết thấy)
+          -> kiểm tra (moderator, sau này có AI hỗ trợ)
+          -> VISIBLE (mọi người thấy) hoặc REJECTED (không hiển thị).
+   HIDDEN: moderator ẩn sau khi đã hiển thị. DELETED: người viết tự xóa.
+   Lý do từ chối/ẩn lưu ở cột có sẵn hidden_reason; hidden_by là moderator
+   (để trống nếu do hệ thống/AI).
+   ===================================================================== */
+
+IF EXISTS (
+    SELECT 1 FROM sys.check_constraints
+    WHERE name = 'CK_comments_status'
+      AND parent_object_id = OBJECT_ID('dbo.comments')
+)
+BEGIN
+    ALTER TABLE dbo.comments DROP CONSTRAINT CK_comments_status;
+END;
+GO
+
+ALTER TABLE dbo.comments
+    ADD CONSTRAINT CK_comments_status
+        CHECK (status IN ('PENDING', 'VISIBLE', 'REJECTED', 'HIDDEN', 'DELETED'));
+GO
+
+-- Mặc định PENDING để comment không bao giờ lộ ra công khai khi chưa duyệt.
+IF EXISTS (
+    SELECT 1 FROM sys.default_constraints
+    WHERE name = 'DF_comments_status'
+      AND parent_object_id = OBJECT_ID('dbo.comments')
+)
+BEGIN
+    ALTER TABLE dbo.comments DROP CONSTRAINT DF_comments_status;
+END;
+GO
+
+ALTER TABLE dbo.comments
+    ADD CONSTRAINT DF_comments_status DEFAULT 'PENDING' FOR status;
+GO

@@ -77,8 +77,13 @@ Chỉ đánh dấu `[x]` sau khi chạy test. Chức năng chưa triển khai gh
 - [ ] Lỗi upload/DB rollback không để lại file mới hoặc metadata sai.
 
 ## 7. Comment/bookmark/follow/history/rating
-- [ ] Comment hợp lệ; user chỉ sửa/xóa comment của mình.
-- [ ] Comment ẩn không hiển thị sai.
+- [ ] Comment chỉ tạo được cho comic/chapter public; comment/reply mới ở PENDING.
+- [x] Public chỉ thấy VISIBLE; người viết xem được trạng thái của comment mình; MODERATOR/ADMIN xem được queue.
+- [ ] Parent comment phải VISIBLE và cùng comic/chapter; không reply vào vị trí khác.
+- [ ] User chỉ sửa/xóa comment của mình; sửa comment VISIBLE/REJECTED đưa lại về PENDING; comment HIDDEN/DELETED không sửa được.
+- [ ] MODERATOR/ADMIN approve/reject comment PENDING; reject cần lý do; không tự kiểm duyệt comment của mình.
+- [ ] MODERATOR/ADMIN chỉ hide comment VISIBLE và phải ghi lý do.
+- [ ] Migration comment status chạy được trên database cũ và schema mới.
 - [x] Thêm/bỏ bookmark; chỉ bookmark truyện PUBLISHED, không tạo bản ghi trùng và không thao tác bookmark của user khác.
 - [ ] Follow/unfollow đúng đối tượng; không tạo liên kết trùng.
 - [x] History chỉ thuộc user hiện tại; không đọc/xóa history người khác.
@@ -89,11 +94,13 @@ Chỉ đánh dấu `[x]` sau khi chạy test. Chức năng chưa triển khai gh
 - [ ] Tổng hợp rating đúng nếu đã triển khai.
 
 ## 8. Report/Admin
-- [ ] Report hợp lệ; dữ liệu thiếu bị từ chối.
-- [ ] User không tự xử lý report.
-- [ ] Moderator/admin chỉ thực hiện quyền được cấp.
-- [ ] Trạng thái report hợp lệ; log được ghi khi cần.
-- [ ] Dashboard trả số liệu hợp lý nếu đã triển khai.
+- [ ] Chỉ USER/AUTHOR gửi report cho Comic/chapter/comment public; target type/reason sai hoặc target ẩn bị từ chối.
+- [x] MODERATOR/ADMIN xem report theo bộ lọc và phân trang; role khác bị từ chối.
+- [x] Report chỉ chuyển OPEN → IN_PROGRESS → RESOLVED/REJECTED; không kết luận trực tiếp từ OPEN hoặc sửa trạng thái terminal.
+- [x] RESOLVED/REJECTED bắt buộc có resolutionNote; người gửi không tự xử lý report.
+- [ ] Report lưu handler/thời điểm/kết luận; migration chuyển DISMISSED cũ sang REJECTED và cập nhật status constraint.
+- [x] Dashboard chỉ cho ADMIN.
+- [ ] Dashboard counts khớp dữ liệu từng queue.
 - [ ] User không truy cập API quản trị hoặc tự nâng role.
 
 ## 9. Frontend/integration/regression
@@ -126,5 +133,12 @@ Chỉ đánh dấu `[x]` sau khi chạy test. Chức năng chưa triển khai gh
 - [ ] Khi contract/schema/permission thay đổi đã được nhóm chấp thuận, test, frontend types và tài liệu liên quan đã được cập nhật.
 
 Postman RBAC smoke collection: `backend/postman/ComicHub-RBAC.postman_collection.json`; environment `backend/postman/ComicHub-Local.postman_environment.json` chỉ chứa URL và token placeholder rỗng. Không commit token thật.
+
+**Bằng chứng kiểm thử backend (SQL Server local):**
+- `.\mvnw.cmd "-Dtest=ModerationApiIntegrationTest,SecurityAuthorizationIntegrationTest" test` (chạy từ `backend`) — PASS, 17 tests: xác minh HTTP MVC, quyền, comment PENDING→VISIBLE, report workflow và dashboard.
+- Đã chạy lại migration comment 004 và report 005 trên SQL Server local; cả hai chạy thành công. Constraint comment cho phép PENDING/VISIBLE/REJECTED/HIDDEN/DELETED, default PENDING; constraint report cho phép OPEN/IN_PROGRESS/RESOLVED/REJECTED. Database không có report DISMISSED hoặc bản ghi report nào cần chuyển đổi.
+- `.\mvnw.cmd "-Dtest=BackendApplicationTests,SecurityAuthorizationIntegrationTest" test` — PASS, 18 tests (3 application/JPA context, 15 authorization integration).
+- Bộ unit test mục tiêu moderation và Comic/chapter/revision/log — PASS, 40 tests.
+- Các mục chưa đánh dấu vẫn cần được kiểm thử riêng trước khi nghiệm thu toàn bộ moderation.
 
 **Mẫu bằng chứng:** Endpoint/ID test; contract version hoặc commit; request (đã loại secret); expected; actual; PASS/FAIL/BLOCKED; môi trường; người chạy; lỗi liên quan.

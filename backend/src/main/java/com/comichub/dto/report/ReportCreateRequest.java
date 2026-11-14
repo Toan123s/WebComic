@@ -1,10 +1,22 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: ReportCreateRequest.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Thành phần backend ReportCreateRequest.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Đối chiếu với API contract, schema và các thành phần liên quan trước khi triển khai.
- */
+package com.comichub.dto.report;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
+public record ReportCreateRequest(
+        @NotBlank
+        @Pattern(regexp = "(?i)COMIC|CHAPTER|COMMENT",
+                message = "targetType phải là COMIC, CHAPTER hoặc COMMENT")
+        String targetType,
+        @Positive(message = "targetId phải là số nguyên dương")
+        Long targetId,
+        @NotBlank
+        @Pattern(regexp = "(?i)SPAM|INAPPROPRIATE|COPYRIGHT|OTHER",
+                message = "reason không hợp lệ")
+        String reason,
+        @Size(max = 500, message = "description tối đa 500 ký tự")
+        String description
+) {
+}

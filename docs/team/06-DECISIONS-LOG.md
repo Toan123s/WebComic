@@ -87,3 +87,9 @@ Chốt page index, response phân trang và format lỗi phù hợp code hiện 
 - Quyết định: lưu snapshot bản sửa riêng để truyện đã duyệt tiếp tục hiển thị trong lúc MODERATOR duyệt; mỗi truyện tối đa một revision `PENDING`. Duyệt áp dụng snapshot; từ chối giữ nguyên bản public và lưu lý do.
 - Schema: thêm bảng `comic_revisions` với khóa ngoại, check constraints và filtered unique index. Migration riêng idempotent; đã áp dụng vào database local `comichub` mà không dựng lại schema hoặc sửa dữ liệu/role hiện có.
 - Trạng thái: Schema đã áp dụng; backend `ddl-auto=validate` và test suite đã chạy thành công.
+
+## D-024 — Quy trình kiểm duyệt comment và report
+- Comment mới bắt đầu ở `PENDING`; chỉ người viết xem được trạng thái chưa duyệt của mình. MODERATOR/ADMIN chuyển comment `PENDING` sang `VISIBLE` hoặc `REJECTED`; comment `VISIBLE` có thể chuyển `HIDDEN`. Từ chối/ẩn cần lưu lý do; sửa comment đang hiển thị đưa nội dung về `PENDING`.
+- Report chỉ nhận nội dung public, có target `COMIC`, `CHAPTER`, `COMMENT` và reason `SPAM`, `INAPPROPRIATE`, `COPYRIGHT`, `OTHER`. Luồng trạng thái là `OPEN → IN_PROGRESS → RESOLVED/REJECTED`; kết luận cuối cần resolution note.
+- MODERATOR/ADMIN xử lý queue; ADMIN xem dashboard. Người gửi không tự xử lý report; moderator không tự kiểm duyệt comment của mình.
+- Trạng thái: Đã chốt ngày 2026-11-14; API comment/report/dashboard đã được kiểm thử tích hợp trên SQL Server local. Migration 005 đã áp dụng; migration 004 được xác nhận trong schema local. Các kiểm tra còn lại theo checklist vẫn cần hoàn tất trước khi nghiệm thu toàn bộ.

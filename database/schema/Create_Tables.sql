@@ -282,7 +282,7 @@ CREATE TABLE comments (
     chapter_id     BIGINT         NULL,
     parent_id      BIGINT         NULL,
     content        NVARCHAR(1000) NOT NULL,
-    status         VARCHAR(20)    NOT NULL CONSTRAINT DF_comments_status DEFAULT 'VISIBLE',
+    status         VARCHAR(20)    NOT NULL CONSTRAINT DF_comments_status DEFAULT 'PENDING',
     hidden_by      BIGINT         NULL,
     hidden_reason  NVARCHAR(300)  NULL,
     created_at     DATETIME2      NOT NULL CONSTRAINT DF_comments_created_at DEFAULT SYSDATETIME(),
@@ -293,7 +293,7 @@ CREATE TABLE comments (
     CONSTRAINT FK_comments_chapter   FOREIGN KEY (chapter_id) REFERENCES chapters(id),
     CONSTRAINT FK_comments_parent    FOREIGN KEY (parent_id)  REFERENCES comments(id),
     CONSTRAINT FK_comments_hidden_by FOREIGN KEY (hidden_by)  REFERENCES users(id),
-    CONSTRAINT CK_comments_status    CHECK (status IN ('VISIBLE', 'HIDDEN', 'DELETED'))
+    CONSTRAINT CK_comments_status    CHECK (status IN ('PENDING', 'VISIBLE', 'REJECTED', 'HIDDEN', 'DELETED'))
 );
 GO
 
@@ -374,7 +374,7 @@ CREATE TABLE reports (
     CONSTRAINT FK_reports_handled_by  FOREIGN KEY (handled_by)  REFERENCES users(id),
     CONSTRAINT CK_reports_target_type CHECK (target_type IN ('COMIC', 'CHAPTER', 'COMMENT')),
     CONSTRAINT CK_reports_reason      CHECK (reason IN ('SPAM', 'INAPPROPRIATE', 'COPYRIGHT', 'OTHER')),
-    CONSTRAINT CK_reports_status      CHECK (status IN ('OPEN', 'RESOLVED', 'DISMISSED'))
+    CONSTRAINT CK_reports_status      CHECK (status IN ('OPEN', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'))
 );
 GO
 

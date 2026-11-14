@@ -1,10 +1,11 @@
-/**
- * DỰ ÁN: ComicHub
- * FILE: CommentUpdateRequest.java
- * PHỤ TRÁCH: TV1 - Backend và Security
- * MỤC ĐÍCH: Thành phần backend CommentUpdateRequest.
- * TRẠNG THÁI: CHƯA TRIỂN KHAI — file khung, chưa có mã chức năng.
- * CÒN THIẾU: Cần bổ sung implementation theo API contract và kiểm thử; cập nhật trạng thái sau khi hoàn thành.
- * LƯU Ý: Đối chiếu với API contract, schema và các thành phần liên quan trước khi triển khai.
- */
+package com.comichub.dto.comment;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record CommentUpdateRequest(
+        @NotBlank(message = "Nội dung bình luận không được để trống")
+        @Size(max = 1000, message = "Nội dung bình luận tối đa 1000 ký tự")
+        String content
+) {
+}

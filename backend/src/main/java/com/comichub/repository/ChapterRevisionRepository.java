@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface ChapterRevisionRepository extends JpaRepository<ChapterRevision, Long> {
 
+    long countByStatus(String status);
+
     boolean existsByChapter_IdAndStatusIn(Long chapterId, List<String> statuses);
 
     @EntityGraph(attributePaths = {"chapter", "chapter.comic", "submittedBy", "reviewer"})
