@@ -215,7 +215,7 @@ export default function HomePage() {
                     <nav className="main-nav">
                         <a className="active" href="/">Trang chủ</a>
                         <a href="#latest">Truyện mới cập nhật</a>
-                        <a href="/login">Lịch sử đọc</a>
+                        <a href="/history">Lịch sử đọc</a>
                     </nav>
 
                     <div className="header-search">
