@@ -6,6 +6,13 @@ import ComicDetailPage from './pages/comic/ComicDetailPage';
 import ReaderPage from './pages/reader/ReaderPage';
 import ReadingHistoryPage from './pages/history/ReadingHistoryPage';
 import ProfilePage from './pages/profile/ProfilePage';
+import AIStudioPage from './pages/creator/AIStudioPage';
+import ComicsManagementPage from './pages/creator/ComicsManagementPage';
+import CreatorProfilePage from './pages/profile/CreatorProfilePage';
+import CreatorDashboardPage from './pages/creator/CreatorDashboardPage';
+import ChapterManagementPage from './pages/creator/ChapterManagementPage';
+
+
 function App() {
   const path = window.location.pathname;
 
@@ -34,7 +41,19 @@ function App() {
   if (path === '/profile') {
     return <ProfilePage />;
   }
-
+  if (path === '/studio/ai-assistant') {
+    return <AIStudioPage />;
+  }
+  if (path === '/studio') {
+    return <CreatorDashboardPage />;
+  }
+  if (path === '/studio/comics') {
+    return <ComicsManagementPage />;
+  }
+  if (path === '/studio/chapters') {
+    return <ChapterManagementPage />;
+  }
+  if (path === '/studio/profile') return <CreatorProfilePage />;
   return <HomePage />;
 }
 
