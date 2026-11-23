@@ -1,0 +1,2000 @@
+
+.chapter-studio {
+    --ch-primary: #1456c8;
+    --ch-primary-dark: #0643ad;
+    --ch-bg: #f4f7ff;
+    --ch-surface: #ffffff;
+    --ch-soft: #edf3ff;
+    --ch-soft-2: #e1ebff;
+    --ch-text: #10213b;
+    --ch-muted: #69778e;
+    --ch-border: #dce5f3;
+    min-height: 100vh;
+    background: var(--ch-bg);
+    color: var(--ch-text);
+    font-family: 'Be Vietnam Pro', 'Segoe UI', sans-serif;
+    font-size: 14px;
+}
+
+.chapter-studio * {
+    box-sizing: border-box;
+}
+
+.chapter-studio button,
+.chapter-studio input,
+.chapter-studio textarea {
+    font: inherit;
+}
+
+.chapter-studio button {
+    cursor: pointer;
+}
+
+.chapter-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    width: 256px;
+    background: #fff;
+    border-right: 1px solid var(--ch-border);
+}
+
+.chapter-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 76px;
+    padding: 12px 18px;
+    border-bottom: 1px solid #edf0f6;
+}
+
+.chapter-brand-mark {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb, #6b5cf6);
+    color: white;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.chapter-brand-name {
+    color: var(--ch-primary);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.chapter-brand-name span {
+    color: #66748a;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.chapter-brand-label {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    background: var(--ch-soft);
+    color: var(--ch-primary);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.chapter-workspace-label {
+    margin: 18px 14px 12px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #f1f5fc;
+    color: #63718a;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.chapter-workspace-label span {
+    margin-right: 7px;
+}
+
+.chapter-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 10px;
+}
+
+.chapter-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 42px;
+    padding: 0 13px;
+    border-radius: 8px;
+    color: #66748a;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.chapter-nav a:hover {
+    background: #edf3ff;
+    color: var(--ch-primary);
+}
+
+.chapter-nav a.active {
+    background: var(--ch-primary);
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 4px 10px #1456c826;
+}
+
+.pro-label {
+    padding: 3px 7px;
+    border-radius: 20px;
+    background: #eee8ff;
+    color: #6941c6;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.chapter-sidebar-bottom {
+    margin-top: auto;
+    padding: 15px;
+    border-top: 1px solid #edf0f6;
+}
+
+.storage-card {
+    padding: 12px;
+    border-radius: 9px;
+    background: #f1f5fc;
+}
+
+.storage-heading,
+.storage-values,
+.chapter-version {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.storage-heading {
+    color: var(--ch-muted);
+    font-size: 11px;
+}
+
+.storage-heading strong {
+    color: var(--ch-primary);
+}
+
+.storage-track {
+    height: 6px;
+    margin: 10px 0 7px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #d5e1f4;
+}
+
+.storage-track div {
+    width: 32%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ch-primary);
+}
+
+.storage-values,
+.chapter-version {
+    color: #8490a3;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+}
+
+.chapter-version {
+    margin-top: 14px;
+    font-family: inherit;
+    font-size: 10px;
+}
+
+.chapter-version strong {
+    color: #65738a;
+}
+
+.chapter-main {
+    min-height: 100vh;
+    margin-left: 256px;
+}
+
+.chapter-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 66px;
+    padding: 0 28px;
+    background: #ffffffed;
+    border-bottom: 1px solid var(--ch-border);
+    backdrop-filter: blur(14px);
+}
+
+.chapter-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ch-muted);
+    font-size: 12px;
+}
+
+.chapter-breadcrumb strong {
+    color: var(--ch-text);
+    font-size: 14px;
+}
+
+.chapter-breadcrumb span:last-child {
+    color: var(--ch-primary);
+    font-weight: 600;
+}
+
+.chapter-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.reader-link {
+    padding: 9px 12px;
+    border: 1px solid var(--ch-border);
+    border-radius: 8px;
+    color: #64728a;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+.reader-link:hover {
+    background: var(--ch-soft);
+    color: var(--ch-primary);
+}
+
+.notification-button {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #61718b;
+    font-size: 21px;
+}
+
+.notification-button span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #dc3c4c;
+    color: white;
+    font-size: 9px;
+}
+
+.chapter-user {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--ch-text);
+    text-decoration: none;
+}
+
+.chapter-avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #dce8ff;
+    color: var(--ch-primary);
+    font-weight: 800;
+}
+
+.chapter-user strong,
+.chapter-user small {
+    display: block;
+}
+
+.chapter-user strong {
+    font-size: 12px;
+}
+
+.chapter-user small {
+    margin-top: 3px;
+    color: var(--ch-muted);
+    font-size: 10px;
+}
+
+.chapter-user > span {
+    color: var(--ch-muted);
+}
+
+.chapter-content {
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 28px;
+}
+
+.chapter-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.chapter-heading-info {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 13px;
+}
+
+.back-button {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 39px;
+    height: 39px;
+    border-radius: 10px;
+    background: #e6edfa;
+    color: var(--ch-primary);
+    font-size: 22px;
+    text-decoration: none;
+}
+
+.comic-cover-placeholder {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 48px;
+    height: 62px;
+    border-radius: 7px;
+    background: linear-gradient(145deg, #092b66, #2869ba 55%, #93b9ed);
+    color: #fff;
+    font-size: 25px;
+    font-weight: 800;
+    box-shadow: 0 3px 8px #10213b20;
+}
+
+.chapter-title-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chapter-title-line h1 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.chapter-count,
+.published-label {
+    padding: 5px 8px;
+    border-radius: 20px;
+    background: #e8effb;
+    color: #405575;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.published-label {
+    background: #e4f7ed;
+    color: #13804e;
+}
+
+.chapter-heading-info p {
+    margin: 7px 0 0;
+    color: var(--ch-muted);
+    font-size: 11px;
+}
+
+.chapter-heading-info p span {
+    margin: 0 5px;
+}
+
+.chapter-heading-info p b {
+    color: var(--ch-primary);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+}
+
+.chapter-heading-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 37px;
+    padding: 8px 13px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.button-primary {
+    background: var(--ch-primary);
+    color: white;
+    box-shadow: 0 3px 8px #1456c825;
+}
+
+.button-primary:hover {
+    background: var(--ch-primary-dark);
+    transform: translateY(-1px);
+}
+
+.button-soft {
+    border-color: #dce5f3;
+    background: #edf3ff;
+    color: #315b9d;
+}
+
+.button-soft:hover {
+    background: #dfeaff;
+}
+
+.button-outline {
+    border-color: #cddaf0;
+    background: white;
+    color: var(--ch-primary);
+}
+
+.button-tertiary {
+    align-self: flex-start;
+    background: #6846d9;
+    color: white;
+}
+
+.button-tertiary:hover {
+    background: #5535bd;
+}
+
+.chapter-workspace {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.83fr) minmax(0, 1.75fr);
+    align-items: start;
+    gap: 19px;
+}
+
+.chapter-left-column,
+.chapter-right-column {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 17px;
+}
+
+.panel {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid #e8edf6;
+    border-radius: 12px;
+    background: var(--ch-surface);
+    box-shadow: 0 2px 8px #15294b08;
+}
+
+.panel-heading,
+.editor-heading,
+.upload-heading,
+.page-strip-heading,
+.dialogue-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.panel-heading h2,
+.editor-heading h2,
+.upload-heading h2,
+.dialogue-heading h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.chapter-total,
+.page-count {
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: #edf3ff;
+    color: #58749f;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.chapter-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 17px 0 12px;
+    padding: 0 11px;
+    border-radius: 8px;
+    background: #f0f4fb;
+    color: #8390a5;
+}
+
+.chapter-search span {
+    font-size: 20px;
+}
+
+.chapter-search input {
+    width: 100%;
+    height: 37px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ch-text);
+    font-size: 11px;
+}
+
+.chapter-list {
+    display: flex;
+    max-height: 690px;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    padding-right: 3px;
+}
+
+.chapter-list-item {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 13px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: #f3f6fc;
+    color: var(--ch-text);
+    text-align: left;
+    transition: 0.2s;
+}
+
+.chapter-list-item:hover {
+    background: #eaf1ff;
+}
+
+.chapter-list-item.selected {
+    border-color: #c9dcff;
+    background: #e7efff;
+    box-shadow: inset 3px 0 var(--ch-primary);
+}
+
+.chapter-item-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 7px;
+}
+
+.chapter-number {
+    color: var(--ch-primary);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.status-label {
+    padding: 3px 6px;
+    border-radius: 5px;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.status-draft {
+    background: #e7eaf0;
+    color: #586477;
+}
+
+.status-published {
+    background: #e2f6eb;
+    color: #13804e;
+}
+
+.status-review {
+    background: #fff2d6;
+    color: #a36a0a;
+}
+
+.chapter-list-item > strong {
+    display: block;
+    overflow: hidden;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chapter-item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 7px;
+    color: #7a879b;
+    font-size: 10px;
+}
+
+.chapter-reads {
+    margin-top: 7px;
+    color: #52719f;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+}
+
+.chapter-empty {
+    padding: 25px 12px;
+    color: #7a879b;
+    font-size: 12px;
+    text-align: center;
+}
+
+.autosave-note {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 15px;
+    padding: 11px;
+    border-radius: 8px;
+    background: #f1f5fc;
+    color: #6a7c97;
+    font-size: 10px;
+}
+
+.autosave-note > span:first-child {
+    color: #248b62;
+    font-size: 16px;
+}
+
+.autosave-note strong {
+    margin-left: auto;
+    color: #23865d;
+    font-size: 10px;
+}
+
+.creator-notice {
+    padding: 17px;
+    border-radius: 11px;
+    background: #e6eeff;
+}
+
+.creator-notice h3 {
+    margin: 0 0 8px;
+    color: #2054a5;
+    font-size: 12px;
+}
+
+.creator-notice p {
+    margin: 0;
+    color: #61728d;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+.editor-heading {
+    flex-wrap: wrap;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #edf0f6;
+}
+
+.editor-heading h2 {
+    font-size: 14px;
+}
+
+.draft-badge {
+    padding: 6px 8px;
+    border-radius: 5px;
+    background: #edf0f5;
+    color: #647187;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.chapter-fields {
+    display: grid;
+    grid-template-columns: minmax(110px, 0.8fr) minmax(0, 2.5fr);
+    gap: 14px;
+    margin-top: 17px;
+}
+
+.chapter-fields label,
+.author-note-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.chapter-fields label > span,
+.author-note-field > span,
+.dialogue-input-area label {
+    color: #42536e;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.chapter-fields input,
+.author-note-field textarea,
+.dialogue-input-area textarea {
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    outline: none;
+    background: #f0f4fb;
+    color: var(--ch-text);
+    font-size: 12px;
+    transition: 0.2s;
+}
+
+.chapter-fields input {
+    height: 41px;
+    padding: 0 12px;
+}
+
+.chapter-fields input:focus,
+.author-note-field textarea:focus,
+.dialogue-input-area textarea:focus {
+    border-color: #8bb4f8;
+    box-shadow: 0 0 0 3px #1456c817;
+}
+
+.number-input {
+    position: relative;
+}
+
+.number-input b {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    color: #8290a5;
+    transform: translateY(-50%);
+}
+
+.number-input input {
+    padding-left: 29px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+}
+
+.author-note-field {
+    margin-top: 18px;
+}
+
+.author-note-field textarea,
+.dialogue-input-area textarea {
+    resize: vertical;
+    min-height: 80px;
+    padding: 12px;
+    line-height: 1.7;
+}
+
+.upload-heading {
+    align-items: flex-start;
+}
+
+.upload-heading h2 {
+    font-size: 15px;
+}
+
+.upload-heading p,
+.dialogue-panel > p {
+    margin: 7px 0 0;
+    color: #77849a;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.upload-dropzone {
+    display: flex;
+    min-height: 205px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 19px;
+    padding: 22px;
+    border: 2px dashed #cbd9f0;
+    border-radius: 11px;
+    background: #f3f6fc;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.upload-dropzone:hover {
+    border-color: #7ca7ed;
+    background: #eaf1ff;
+}
+
+.upload-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 11px;
+    border-radius: 50%;
+    background: #dce8ff;
+    color: var(--ch-primary);
+    font-size: 24px;
+}
+
+.upload-dropzone > strong {
+    font-size: 12px;
+}
+
+.upload-dropzone > p {
+    margin: 7px 0 13px;
+    color: #77849a;
+    font-size: 10px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+}
+
+.page-strip-heading {
+    margin: 20px 0 12px;
+}
+
+.page-strip-heading strong {
+    font-size: 10px;
+    letter-spacing: 0.4px;
+}
+
+.page-strip-heading span {
+    color: #7d8aa0;
+    font-size: 10px;
+}
+
+.page-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.page-card {
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid #e5ebf5;
+    border-radius: 10px;
+    background: #f2f5fb;
+    transition: 0.2s;
+}
+
+.page-card:hover {
+    border-color: #b9cff2;
+    box-shadow: 0 5px 14px #193b6a12;
+}
+
+.page-image {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    border-radius: 7px;
+    background: #dce5f3;
+}
+
+.page-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.page-index {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    background: #13233bd9;
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+}
+
+.page-zoom {
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    display: grid;
+    place-items: center;
+    width: 29px;
+    height: 29px;
+    border: 0;
+    border-radius: 50%;
+    background: #ffffffed;
+    color: var(--ch-primary);
+    font-size: 19px;
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.page-card:hover .page-zoom {
+    opacity: 1;
+}
+
+.page-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    padding-top: 7px;
+}
+
+.page-card-footer > span {
+    overflow: hidden;
+    color: #718099;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.page-card-footer > div {
+    display: flex;
+    flex-shrink: 0;
+    gap: 1px;
+}
+
+.page-card-footer button {
+    width: 23px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #60728e;
+    font-size: 15px;
+}
+
+.page-card-footer button:hover:not(:disabled) {
+    background: #dce8ff;
+    color: var(--ch-primary);
+}
+
+.page-card-footer button:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+.page-card-footer button.delete-page {
+    color: #d34d5b;
+}
+
+.page-card-footer button.delete-page:hover {
+    background: #ffe5e7;
+}
+
+.dialogue-heading {
+    flex-wrap: wrap;
+}
+
+.dialogue-heading h2 {
+    color: #6746ca;
+}
+
+.dialogue-heading > span {
+    padding: 5px 8px;
+    border-radius: 5px;
+    background: #f0eaff;
+    color: #6846c9;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.dialogue-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+    margin-top: 16px;
+}
+
+.dialogue-input-area {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+}
+
+.dialogue-input-area textarea {
+    min-height: 120px;
+}
+
+.dialogue-suggestion {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    padding: 14px;
+    border-radius: 9px;
+    background: #f1edff;
+}
+
+.dialogue-suggestion > strong {
+    color: #6546c4;
+    font-size: 11px;
+}
+
+.dialogue-suggestion blockquote {
+    flex: 1;
+    margin: 12px 0;
+    padding: 13px;
+    border-radius: 7px;
+    background: white;
+    color: #39445b;
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.8;
+}
+
+.suggestion-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 7px;
+}
+
+.chapter-footer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 16px;
+    border: 1px solid #e8edf6;
+    border-radius: 11px;
+    background: white;
+    box-shadow: 0 3px 10px #15294b0a;
+}
+
+.chapter-footer-actions > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64758e;
+    font-size: 10px;
+}
+
+.chapter-footer-actions > div:first-child span {
+    color: #21966b;
+    font-size: 17px;
+}
+
+.footer-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.webtoon-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    background: #090f1d;
+    color: white;
+}
+
+.webtoon-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    min-height: 64px;
+    padding: 10px 22px;
+    border-bottom: 1px solid #26334b;
+    background: #111c30;
+}
+
+.webtoon-modal-header > strong {
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.webtoon-modal-header > button {
+    flex-shrink: 0;
+    padding: 9px 12px;
+    border: 1px solid #36445d;
+    border-radius: 7px;
+    background: #1d2a40;
+    color: white;
+    font-size: 11px;
+}
+
+.preview-spacing {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 5px;
+    color: #b5c3d9;
+    font-size: 10px;
+}
+
+.preview-spacing button {
+    padding: 5px 7px;
+    border: 0;
+    border-radius: 5px;
+    background: #27354e;
+    color: white;
+    font-size: 10px;
+}
+
+.preview-spacing button.chosen {
+    background: #2563eb;
+}
+
+.webtoon-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 25px 15px;
+}
+
+.webtoon-pages {
+    display: flex;
+    width: 100%;
+    max-width: 680px;
+    flex-direction: column;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 5px;
+    background: black;
+    box-shadow: 0 12px 40px #0008;
+}
+
+.webtoon-pages img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.webtoon-pages p {
+    padding: 50px 20px;
+    color: white;
+    text-align: center;
+}
+
+.webtoon-ending {
+    padding: 32px 15px;
+    text-align: center;
+}
+
+.webtoon-ending h2 {
+    font-size: 20px;
+}
+
+.webtoon-ending p {
+    margin-bottom: 20px;
+    color: #aab7ca;
+}
+
+.image-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 35px;
+    background: #071020ed;
+}
+
+.image-lightbox img {
+    max-width: 90vw;
+    max-height: 88vh;
+    object-fit: contain;
+    border-radius: 7px;
+}
+
+.image-lightbox button {
+    position: absolute;
+    top: 18px;
+    right: 25px;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: #26354d;
+    color: white;
+    font-size: 26px;
+}
+
+.chapter-toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 150;
+    max-width: min(400px, calc(100vw - 35px));
+    padding: 13px 18px;
+    border: 1px solid #d8e5fb;
+    border-radius: 9px;
+    background: #fff;
+    color: #24446f;
+    box-shadow: 0 8px 25px #15294b20;
+    font-size: 12px;
+    animation: chapter-toast-in 0.2s ease-out;
+}
+
+@keyframes chapter-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 1250px) {
+    .chapter-content {
+        padding: 22px;
+    }
+
+    .chapter-workspace {
+        grid-template-columns: minmax(250px, 0.75fr) minmax(0, 1.6fr);
+        gap: 13px;
+    }
+
+    .panel {
+        padding: 15px;
+    }
+
+    .chapter-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .chapter-heading-actions {
+        align-self: flex-end;
+    }
+
+    .page-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .chapter-sidebar {
+        width: 205px;
+    }
+
+    .chapter-main {
+        margin-left: 205px;
+    }
+
+    .chapter-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .chapter-left-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+
+    .chapter-list {
+        max-height: 390px;
+    }
+
+    .reader-link {
+        display: none;
+    }
+}
+
+@media (max-width: 650px) {
+    .chapter-sidebar {
+        position: static;
+        width: 100%;
+        min-height: auto;
+    }
+
+    .chapter-brand {
+        min-height: 62px;
+    }
+
+    .chapter-workspace-label,
+    .chapter-sidebar-bottom {
+        display: none;
+    }
+
+    .chapter-nav {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        padding: 8px;
+    }
+
+    .chapter-nav a {
+        justify-content: center;
+        min-height: 36px;
+        padding: 5px;
+        font-size: 10px;
+        text-align: center;
+    }
+
+    .chapter-nav a:nth-child(n + 4) {
+        display: none;
+    }
+
+    .chapter-main {
+        margin-left: 0;
+    }
+
+    .chapter-topbar {
+        position: static;
+        min-height: 55px;
+        padding: 0 14px;
+    }
+
+    .chapter-content {
+        padding: 16px 12px 25px;
+    }
+
+    .chapter-topbar-right {
+        gap: 8px;
+    }
+
+    .chapter-user > div:nth-child(2),
+    .chapter-user > span {
+        display: none;
+    }
+
+    .chapter-heading-info {
+        flex-wrap: wrap;
+    }
+
+    .chapter-title-line h1 {
+        font-size: 17px;
+    }
+
+    .chapter-heading-info p {
+        line-height: 1.8;
+    }
+
+    .chapter-heading-actions {
+        width: 100%;
+        align-self: stretch;
+    }
+
+    .chapter-heading-actions .button {
+        flex: 1;
+    }
+
+    .chapter-left-column {
+        display: flex;
+    }
+
+    .chapter-fields,
+    .dialogue-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .page-strip-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .chapter-footer-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .footer-buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .webtoon-modal-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .webtoon-modal-header > strong {
+        order: 3;
+        width: 100%;
+    }
+
+    .preview-spacing {
+        margin-left: auto;
+    }
+}
+
+.page-zoom {
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    display: grid;
+    place-items: center;
+    width: 27px;
+    height: 27px;
+    border: 0;
+    border-radius: 6px;
+    background: #ffffffeb;
+    color: #315b9d;
+    font-size: 19px;
+}
+
+.page-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    padding-top: 9px;
+}
+
+.page-card-footer > span {
+    min-width: 0;
+    overflow: hidden;
+    color: #63728a;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.page-card-footer > div {
+    display: flex;
+    flex-shrink: 0;
+    gap: 3px;
+}
+
+.page-card-footer button {
+    display: grid;
+    place-items: center;
+    width: 23px;
+    height: 23px;
+    padding: 0;
+    border: 1px solid #dce5f3;
+    border-radius: 5px;
+    background: white;
+    color: #506987;
+    font-size: 13px;
+}
+
+.page-card-footer button:hover:not(:disabled) {
+    border-color: #9bbaf0;
+    background: #e6efff;
+    color: var(--ch-primary);
+}
+
+.page-card-footer button:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+}
+
+.page-card-footer button.delete-page {
+    border-color: #f3d5d8;
+    color: #d14b58;
+}
+
+.page-card-footer button.delete-page:hover {
+    background: #fff0f1;
+}
+
+.dialogue-panel {
+    background: #fbfaff;
+}
+
+.dialogue-heading h2 {
+    color: #45318d;
+}
+
+.dialogue-heading > span {
+    padding: 5px 8px;
+    border: 1px solid #e5ddff;
+    border-radius: 5px;
+    background: #f0ebff;
+    color: #7453c8;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.dialogue-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.dialogue-input-area {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+}
+
+.dialogue-input-area textarea {
+    min-height: 145px;
+    border-color: #e6e0f7;
+    background: #fff;
+    line-height: 1.8;
+}
+
+.dialogue-suggestion {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    padding: 14px;
+    border: 1px solid #e6ddff;
+    border-radius: 9px;
+    background: #f1edff;
+}
+
+.dialogue-suggestion > strong {
+    color: #6746bd;
+    font-size: 11px;
+}
+
+.dialogue-suggestion blockquote {
+    flex: 1;
+    margin: 12px 0;
+    padding: 12px;
+    border-left: 3px solid #9478e4;
+    border-radius: 0 7px 7px 0;
+    background: white;
+    color: #3d3560;
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.9;
+}
+
+.suggestion-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.suggestion-actions .button {
+    font-size: 10px;
+}
+
+.chapter-footer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 15px 17px;
+    border: 1px solid var(--ch-border);
+    border-radius: 11px;
+    background: white;
+}
+
+.chapter-footer-actions > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #718097;
+    font-size: 10px;
+}
+
+.chapter-footer-actions > div:first-child span {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #e2f6eb;
+    color: #168354;
+}
+
+.chapter-footer-actions > div:first-child strong {
+    font-weight: 600;
+}
+
+.footer-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+/* Thông báo */
+.chapter-toast {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    z-index: 100;
+    max-width: min(420px, calc(100vw - 35px));
+    padding: 13px 18px;
+    border: 1px solid #d3e2fa;
+    border-radius: 9px;
+    background: #173d79;
+    color: white;
+    box-shadow: 0 8px 25px #10213b30;
+    font-size: 12px;
+    line-height: 1.6;
+    animation: chapter-toast-in 0.2s ease-out;
+}
+
+@keyframes chapter-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Chế độ xem trước Webtoon */
+.webtoon-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    background: #101827;
+}
+
+.webtoon-modal-header {
+    display: flex;
+    min-height: 62px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 10px 22px;
+    border-bottom: 1px solid #354156;
+    background: #19263a;
+    color: white;
+}
+
+.webtoon-modal-header > button {
+    padding: 9px 12px;
+    border: 1px solid #45546c;
+    border-radius: 7px;
+    background: transparent;
+    color: #e0e9f8;
+    font-size: 11px;
+}
+
+.webtoon-modal-header > strong {
+    overflow: hidden;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.preview-spacing {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+    color: #c1cce0;
+    font-size: 10px;
+}
+
+.preview-spacing button {
+    padding: 6px 8px;
+    border: 1px solid #52617a;
+    border-radius: 5px;
+    background: transparent;
+    color: #d5deee;
+    font-size: 10px;
+}
+
+.preview-spacing button.chosen {
+    border-color: #6c9df2;
+    background: #2858a3;
+    color: white;
+}
+
+.webtoon-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 25px 15px 60px;
+}
+
+.webtoon-pages {
+    display: flex;
+    width: 100%;
+    max-width: 650px;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+.webtoon-pages img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #fff;
+}
+
+.webtoon-pages > p {
+    padding: 50px 20px;
+    color: #d4deee;
+    text-align: center;
+}
+
+.webtoon-ending {
+    padding: 45px 15px;
+    color: #d8e2f2;
+    text-align: center;
+}
+
+.webtoon-ending h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.webtoon-ending p {
+    margin: 8px 0 20px;
+    color: #aebdd3;
+    font-size: 12px;
+}
+
+/* Phóng to trang ảnh */
+.image-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 45px;
+    background: #071326ed;
+}
+
+.image-lightbox > img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 5px;
+    box-shadow: 0 10px 40px #0008;
+}
+
+.image-lightbox > button {
+    position: absolute;
+    top: 17px;
+    right: 23px;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #ffffff55;
+    border-radius: 50%;
+    background: #ffffff18;
+    color: white;
+    font-size: 25px;
+}
+
+/* Responsive: máy tính bảng */
+@media (max-width: 1200px) {
+    .chapter-content {
+        padding: 20px;
+    }
+
+    .chapter-workspace {
+        grid-template-columns: minmax(245px, 0.75fr) minmax(0, 1.5fr);
+        gap: 13px;
+    }
+
+    .panel {
+        padding: 15px;
+    }
+
+    .page-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .chapter-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* Responsive: màn hình nhỏ */
+@media (max-width: 850px) {
+    .chapter-sidebar {
+        width: 190px;
+    }
+
+    .chapter-main {
+        margin-left: 190px;
+    }
+
+    .chapter-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .chapter-left-column {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .chapter-heading-actions {
+        width: 100%;
+    }
+
+    .chapter-heading-actions .button {
+        flex: 1;
+    }
+
+    .chapter-topbar {
+        padding: 0 15px;
+    }
+
+    .reader-link {
+        display: none;
+    }
+}
+
+/* Responsive: điện thoại */
+@media (max-width: 600px) {
+    .chapter-sidebar {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--ch-border);
+    }
+
+    .chapter-brand {
+        min-height: 60px;
+    }
+
+    .chapter-workspace-label,
+    .chapter-sidebar-bottom {
+        display: none;
+    }
+
+    .chapter-nav {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+        padding: 7px 9px 10px;
+    }
+
+    .chapter-nav a {
+        justify-content: center;
+        min-height: 36px;
+        padding: 5px;
+        font-size: 10px;
+        text-align: center;
+    }
+
+    .chapter-nav a:nth-child(n + 4) {
+        display: none;
+    }
+
+    .pro-label {
+        display: none;
+    }
+
+    .chapter-main {
+        margin-left: 0;
+    }
+
+    .chapter-topbar {
+        position: relative;
+        min-height: 55px;
+        padding: 0 12px;
+    }
+
+    .chapter-topbar-right {
+        gap: 8px;
+    }
+
+    .chapter-user > div:nth-child(2),
+    .chapter-user > span {
+        display: none;
+    }
+
+    .chapter-content {
+        padding: 15px 11px 25px;
+    }
+
+    .chapter-heading-info {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .chapter-title-line h1 {
+        font-size: 17px;
+    }
+
+    .chapter-heading-info p {
+        line-height: 1.8;
+    }
+
+    .chapter-heading-actions {
+        flex-direction: column;
+    }
+
+    .chapter-left-column {
+        display: flex;
+    }
+
+    .chapter-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .page-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dialogue-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chapter-footer-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .footer-buttons {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .webtoon-modal-header {
+        flex-wrap: wrap;
+        padding: 10px;
+    }
+
+    .webtoon-modal-header > strong {
+        order: 3;
+        width: 100%;
+    }
+
+    .preview-spacing {
+        margin-left: auto;
+    }
+
+    .image-lightbox {
+        padding: 15px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chapter-studio *,
+    .chapter-studio *::before,
+    .chapter-studio *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
